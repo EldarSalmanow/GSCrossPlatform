@@ -9,11 +9,13 @@
 #include <sstream>
 
 #if defined(GS_USE_BOOST_NOWIDE)
-    #include <boost/nowide/iostream.hpp>
-    #include <boost/nowide/fstream.hpp>
+#include <boost/nowide/iostream.hpp>
+#include <boost/nowide/fstream.hpp>
 #else
-    #include <iostream>
-    #include <fstream>
+
+#include <iostream>
+#include <fstream>
+
 #endif
 
 #include <GSCrossPlatform/GS_CrossPlatformDefines.h>
@@ -25,12 +27,12 @@
 /**
  * One byte signed type
  */
-using I8  = std::int8_t;
+using I8 = std::int8_t;
 
 /**
  * One byte unsigned type
  */
-using U8  = std::uint8_t;
+using U8 = std::uint8_t;
 
 /**
  * Two bytes signed type
@@ -133,87 +135,45 @@ using StringIterator = String::iterator;
  */
 using StreamCharType = CharType;
 
-#if defined(GS_USE_BOOST_NOWIDE)
-    /**
-     * Output stream type
-     */
-    using OStream = boost::nowide::detail::winconsole_ostream;
+/**
+ * Output stream type
+ */
+using OStream = std::basic_ostream<StreamCharType>;
 
-    /**
-     * Input stream type
-     */
-    using IStream = boost::nowide::detail::winconsole_istream;
+/**
+ * Input stream type
+ */
+using IStream = std::basic_istream<StreamCharType>;
 
-    /**
-     * Output file stream type
-     */
-    using OFStream = boost::nowide::basic_ofstream<StreamCharType>;
+/**
+ * Output file stream type
+ */
+using OFStream = std::basic_ofstream<StreamCharType>;
 
-    /**
-     * Input file stream type
-     */
-    using IFStream = boost::nowide::basic_ifstream<StreamCharType>;
+/**
+ * Input file stream type
+ */
+using IFStream = std::basic_ifstream<StreamCharType>;
 
-    /**
-     * Console output stream
-     */
-    inline OStream &COut = boost::nowide::cout;
+/**
+ * Console output stream
+ */
+inline OStream &COut = std::cout;
 
-    /**
-     * Console output error stream
-     */
-    inline OStream &CErr = boost::nowide::cerr;
+/**
+ * Console output error stream
+ */
+inline OStream &CErr = std::cerr;
 
-    /**
-     * Console output log stream
-     */
-    inline OStream &CLog = boost::nowide::clog;
+/**
+ * Console output log stream
+ */
+inline OStream &CLog = std::clog;
 
-    /**
-     * Console input stream
-     */
-    inline IStream &CIn = boost::nowide::cin;
-#else
-    /**
-     * Output stream type
-     */
-    using OStream = std::basic_ostream<StreamCharType>;
-
-    /**
-     * Input stream type
-     */
-    using IStream = std::basic_istream<StreamCharType>;
-
-    /**
-     * Output file stream type
-     */
-    using OFStream = std::basic_ofstream<StreamCharType>;
-
-    /**
-     * Input file stream type
-     */
-    using IFStream = std::basic_ifstream<StreamCharType>;
-
-    /**
-     * Console output stream
-     */
-    inline OStream &COut = std::cout;
-
-    /**
-     * Console output error stream
-     */
-    inline OStream &CErr = std::cerr;
-
-    /**
-     * Console output log stream
-     */
-    inline OStream &CLog = std::clog;
-
-    /**
-     * Console input stream
-     */
-    inline IStream &CIn = std::cin;
-#endif
+/**
+ * Console input stream
+ */
+inline IStream &CIn = std::cin;
 
 /**
  * Container types
@@ -277,5 +237,16 @@ using Void = void;
  * Boolean type
  */
 using Bool = bool;
+
+/**
+ * Byte type
+ */
+using Byte = U8;
+
+/**
+ * Unicode types
+ */
+
+using CodePoint = U32;
 
 #endif //GSCROSSPLATFORM_GS_CROSSPLATFORMTYPES_H

@@ -24,9 +24,6 @@ class GSCrossPlatformConan(ConanFile):
         if self.settings.os == "Windows":
             del self.options.fPIC
 
-    def requirements(self):
-        self.requires("boost/1.76.0")
-
     def layout(self):
         cmake_layout(self)
 
