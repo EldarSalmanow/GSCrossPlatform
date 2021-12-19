@@ -10,6 +10,9 @@
     #define GS_OS_WINDOWS
 #endif
 
+/**
+ * Checking for MSVC compiler
+ */
 #if defined(_MSC_VER)
     #define GS_COMPILER_DETECTED
 

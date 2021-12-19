@@ -7,16 +7,8 @@
 #include <memory>
 #include <string>
 #include <sstream>
-
-#if defined(GS_USE_BOOST_NOWIDE)
-#include <boost/nowide/iostream.hpp>
-#include <boost/nowide/fstream.hpp>
-#else
-
 #include <iostream>
 #include <fstream>
-
-#endif
 
 #include <GSCrossPlatform/GS_CrossPlatformDefines.h>
 
@@ -247,6 +239,107 @@ using Byte = U8;
  * Unicode types
  */
 
+/**
+ * Unicode codepoint type
+ */
 using CodePoint = U32;
+
+/**
+ * Modifier types
+ */
+
+/**
+ * Const type
+ */
+template<typename T>
+using Const = const T;
+
+/**
+ * Pointer type
+ */
+template<typename T>
+using Ptr = T *;
+
+/**
+ * Lvalue reference type
+ */
+template<typename T>
+using LRef = T &;
+
+/**
+ * Rvalue reference type
+ */
+template<typename T>
+using RRef = T &&;
+
+/**
+ * Const pointer type
+ */
+template<typename T>
+using ConstPtr = const T *;
+
+/**
+ * Const lvalue reference type
+ */
+template<typename T>
+using ConstLRef = const T &;
+
+/**
+ * Const rvalue reference type
+ */
+template<typename T>
+using ConstRRef = const T &&;
+
+/**
+ * Type cast functions
+ */
+
+/**
+ * C style cast
+ * @tparam T Out type
+ * @tparam R In type
+ * @param value Value
+ * @return Casted value
+ */
+template<typename T, typename R>
+inline T CCast(R value) {
+    return (T) value;
+}
+
+/**
+ * Reinterpret cast
+ * @tparam T Out type
+ * @tparam R In type
+ * @param value Value
+ * @return Casted value
+ */
+template<typename T, typename R>
+inline T ReinterpretCast(R value) {
+    return reinterpret_cast<T>(value);
+}
+
+/**
+ * Static cast
+ * @tparam T Out type
+ * @tparam R In type
+ * @param value Value
+ * @return Casted value
+ */
+template<typename T, typename R>
+inline T StaticCast(R value) {
+    return static_cast<T>(value);
+}
+
+/**
+ * Dynamic cast
+ * @tparam T Out type
+ * @tparam R In type
+ * @param value Value
+ * @return Casted value
+ */
+template<typename T, typename R>
+inline T DynamicCast(R value) {
+    return dynamic_cast<T>(value);
+}
 
 #endif //GSCROSSPLATFORM_GS_CROSSPLATFORMTYPES_H

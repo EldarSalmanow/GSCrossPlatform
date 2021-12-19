@@ -5,9 +5,15 @@
 
 namespace CrossPlatform {
 
-    inline const CodePoint InvalidCodePoint = 0x10FFFF + 1;
+    /**
+     * Invalid unicode codepoint
+     */
+    inline Const<CodePoint> InvalidCodePoint = 0x10FFFF + 1;
 
-    inline const Vector<Byte> InvalidBytes = {};
+    /**
+     * Invalid unicode bytes
+     */
+    inline Const<Vector<Byte>> InvalidBytes = {};
 
     /**
      * Class for unicode symbol
@@ -19,7 +25,7 @@ namespace CrossPlatform {
          * Constructor for USymbol
          * @param codePoint Unicode codepoint
          */
-        USymbol(CodePoint codePoint);
+        USymbol(ConstLRef<CodePoint> codePoint);
 
     public:
 
@@ -27,7 +33,7 @@ namespace CrossPlatform {
          * Getter for codepoint
          * @return Codepoint
          */
-        CodePoint getCodePoint();
+        CodePoint getCodePoint() const;
 
     private:
 
@@ -36,6 +42,34 @@ namespace CrossPlatform {
          */
         CodePoint _codePoint;
     };
+
+    /**
+     * Is digit symbol
+     * @param symbol Symbol
+     * @return Is digit
+     */
+    Bool IsDigit(ConstLRef<USymbol> symbol);
+
+    /**
+     * Is alpha symbol
+     * @param symbol Symbol
+     * @return Is alpha
+     */
+    Bool IsAlpha(ConstLRef<USymbol> symbol);
+
+    /**
+     * Is starting symbol
+     * @param symbol Symbol
+     * @return Is starting
+     */
+    Bool IsIDStart(ConstLRef<USymbol> symbol);
+
+    /**
+     * Is continue symbol
+     * @param symbol Symbol
+     * @return Is continue
+     */
+    Bool IsIDContinue(ConstLRef<USymbol> symbol);
 
     /**
      * Class for unicode string
@@ -52,22 +86,28 @@ namespace CrossPlatform {
          * Constructor for UString
          * @param string String
          */
-        UString(const C32 *string);
+        UString(ConstPtr<C32> string);
 
     public:
 
         /**
-         * appending one unicode symbol to string
+         * Appending one unicode symbol to string
          * @param symbol Unicode symbol
          * @return
          */
-        Void append(USymbol symbol);
+        Void append(ConstLRef<USymbol> symbol);
 
         /**
          * Converting string to bytes
          * @return String bytes
          */
-        Vector<Byte> asBytes();
+        Vector<Byte> asBytes() const;
+
+        /**
+         * Converting unicode string to standard string
+         * @return Standard string
+         */
+        String asString() const;
 
     public:
 
@@ -75,7 +115,44 @@ namespace CrossPlatform {
          * Getter for unicode symbols
          * @return Unicode symbols
          */
-        Vector<USymbol> getSymbols();
+        Vector<USymbol> getSymbols() const;
+
+    public:
+
+        /**
+         * Appending symbol to string
+         * @param symbol Symbol
+         * @return String
+         */
+        LRef<UString> operator+=(ConstLRef<USymbol> symbol);
+
+        /**
+         * Appending string to string
+         * @param string String
+         * @return String
+         */
+        LRef<UString> operator+=(ConstLRef<UString> string);
+
+        /**
+         * Index string operator
+         * @param index Index
+         * @return Symbol at index
+         */
+        LRef<USymbol> operator[](ConstLRef<U64> index);
+
+        /**
+         * Is equals strings
+         * @param string String
+         * @return Is equals strings
+         */
+        Bool operator==(ConstLRef<UString> string) const;
+
+        /**
+         * Support for comparing strings
+         * @param string String
+         * @return Is true comparing
+         */
+        auto operator<=>(ConstLRef<UString> string) const;
 
     public:
 
@@ -85,14 +162,26 @@ namespace CrossPlatform {
         Vector<USymbol> _symbols;
     };
 
+    /**
+     * Unicode encodings
+     */
     enum class Encoding {
         UTF8,
-        UTF16LE,
-        UTF16BE,
-        UTF32LE,
-        UTF32BE
+        UTF16,
+        UTF32
     };
 
+    /**
+     * Byte encdians
+     */
+    enum class ByteEndian {
+        BigEndian,
+        LittleEndian
+    };
+
+    /**
+     * Conversion errors
+     */
     enum class ConversionError {
         NullError,
         UnknownEncodingError,
@@ -100,21 +189,28 @@ namespace CrossPlatform {
         InvalidBytesError
     };
 
+    /**
+     * Class for supporting unicode conversions
+     */
     class Conversions {
     public:
 
-        inline static Vector<Byte> Encode(CodePoint codePoint, Encoding encoding, ConversionError &conversionError) {
+        /**
+         * Encode unicode symbol
+         * @param codePoint Codepoint
+         * @param encoding Encoding
+         * @param byteEndian Byte endian
+         * @param conversionError Conversion error
+         * @return Unicode symbol bytes
+         */
+        inline static Vector<Byte> Encode(ConstLRef<CodePoint> codePoint, ConstLRef<Encoding> encoding, ConstLRef<ByteEndian> byteEndian, LRef<ConversionError> conversionError) {
             switch (encoding) {
                 case Encoding::UTF8:
                     return EncodeUTF8(codePoint, conversionError);
-                case Encoding::UTF16LE:
-                    return EncodeUTF16(codePoint, conversionError);
-                case Encoding::UTF16BE:
-                    return EncodeUTF16(codePoint, conversionError, true);
-                case Encoding::UTF32LE:
-                    return EncodeUTF32(codePoint, conversionError);
-                case Encoding::UTF32BE:
-                    return EncodeUTF32(codePoint, conversionError, true);
+                case Encoding::UTF16:
+                    return EncodeUTF16(codePoint, byteEndian, conversionError);
+                case Encoding::UTF32:
+                    return EncodeUTF32(codePoint, byteEndian, conversionError);
                 default:
                     conversionError = ConversionError::UnknownEncodingError;
             }
@@ -122,18 +218,22 @@ namespace CrossPlatform {
             return InvalidBytes;
         }
 
-        inline static CodePoint Decode(Vector<Byte> bytes, Encoding encoding, ConversionError &conversionError) {
+        /**
+         * Decode unicode symbol
+         * @param bytes Unicode symbol bytes
+         * @param encoding Encoding
+         * @param byteEndian Byte endian
+         * @param conversionError Conversion error
+         * @return Codepoint
+         */
+        inline static CodePoint Decode(ConstLRef<Vector<Byte>> bytes, ConstLRef<Encoding> encoding, ConstLRef<ByteEndian> byteEndian, LRef<ConversionError> conversionError) {
             switch (encoding) {
                 case Encoding::UTF8:
-                    return DecodeUTF8(std::move(bytes), conversionError);
-                case Encoding::UTF16LE:
-                    return DecodeUTF16(std::move(bytes), conversionError);
-                case Encoding::UTF16BE:
-                    return DecodeUTF16(std::move(bytes), conversionError, true);
-                case Encoding::UTF32LE:
-                    return DecodeUTF32(std::move(bytes), conversionError);
-                case Encoding::UTF32BE:
-                    return DecodeUTF32(std::move(bytes), conversionError, true);
+                    return DecodeUTF8(bytes, conversionError);
+                case Encoding::UTF16:
+                    return DecodeUTF16(bytes, byteEndian, conversionError);
+                case Encoding::UTF32:
+                    return DecodeUTF32(bytes, byteEndian, conversionError);
                 default:
                     conversionError = ConversionError::UnknownEncodingError;
             }
@@ -141,7 +241,13 @@ namespace CrossPlatform {
             return InvalidCodePoint;
         }
 
-        inline static Vector<Byte> EncodeUTF8(CodePoint codePoint, ConversionError &conversionError) {
+        /**
+         * Encoding UTF8 symbol
+         * @param codePoint Codepoint
+         * @param conversionError Conversion error
+         * @return UTF8 symbol bytes
+         */
+        inline static Vector<Byte> EncodeUTF8(ConstLRef<CodePoint> codePoint, LRef<ConversionError> conversionError) {
             auto size = UTF8SymbolSize(codePoint);
 
             if (!size) {
@@ -171,7 +277,13 @@ namespace CrossPlatform {
             return bytes;
         }
 
-        inline static CodePoint DecodeUTF8(Vector<Byte> bytes, ConversionError &conversionError, Bool isBE = false) {
+        /**
+         * Decoding UTF8 symbol
+         * @param bytes UTF8 symbol bytes
+         * @param conversionError Conversion error
+         * @return Codepoint
+         */
+        inline static CodePoint DecodeUTF8(ConstLRef<Vector<Byte>> bytes, LRef<ConversionError> conversionError) {
             auto size = UTF8SymbolSize(bytes[0]);
 
             if (!size) {
@@ -201,33 +313,64 @@ namespace CrossPlatform {
             return codePoint;
         }
 
-        inline static Vector<Byte>
-        EncodeUTF16(CodePoint codePoint, ConversionError &conversionError, Bool isBE = false) {
+        /**
+         * Encoding UTF16 symbol
+         * @param codePoint Codepoint
+         * @param byteEndian Byte endian
+         * @param conversionError Conversion error
+         * @return UTF16 symbol bytes
+         */
+        inline static Vector<Byte> EncodeUTF16(ConstLRef<CodePoint> codePoint, ConstLRef<ByteEndian> byteEndian, LRef<ConversionError> conversionError) {
             // TODO add supporting UTF-16 encoding
 
             return InvalidBytes;
         }
 
-        inline static CodePoint DecodeUTF16(Vector<Byte> bytes, ConversionError &conversionError, Bool isBE = false) {
+        /**
+         * Decoding UTF16 symbol
+         * @param bytes UTF16 symbol bytes
+         * @param byteEndian Byte endian
+         * @param conversionError Conversion error
+         * @return Codepoint
+         */
+        inline static CodePoint DecodeUTF16(ConstLRef<Vector<Byte>> bytes, ConstLRef<ByteEndian> byteEndian, LRef<ConversionError> conversionError) {
             // TODO add supporting UTF-16 decoding
 
             return InvalidCodePoint;
         }
 
-        inline static Vector<Byte>
-        EncodeUTF32(CodePoint codePoint, ConversionError &conversionError, Bool isBE = false) {
+        /**
+         * Encoding UTF32 symbol
+         * @param codePoint Codepoint
+         * @param byteEndian Byte endian
+         * @param conversionError Conversion error
+         * @return UTF32 symbol bytes
+         */
+        inline static Vector<Byte> EncodeUTF32(ConstLRef<CodePoint> codePoint, ConstLRef<ByteEndian> byteEndian, LRef<ConversionError> conversionError) {
             // TODO add supporting UTF-32 encoding
 
             return InvalidBytes;
         }
 
-        inline static CodePoint DecodeUTF32(Vector<Byte> bytes, ConversionError &conversionError, Bool isBE = false) {
+        /**
+         * Decoding UTF32 symbol
+         * @param bytes UTF32 symbol bytes
+         * @param byteEndian Byte endian
+         * @param conversionError Conversion error
+         * @return Codepoint
+         */
+        inline static CodePoint DecodeUTF32(ConstLRef<Vector<Byte>> bytes, ConstLRef<ByteEndian> byteEndian, LRef<ConversionError> conversionError) {
             // TODO add supporting UTF-32 decoding
 
             return InvalidCodePoint;
         }
 
-        inline static U8 UTF8SymbolSize(CodePoint codePoint) {
+        /**
+         * UTF8 symbol size
+         * @param codePoint Codepoint
+         * @return UTF8 symbol size
+         */
+        inline static U8 UTF8SymbolSize(ConstLRef<CodePoint> codePoint) {
             U8 size = 0;
 
             if (codePoint <= 0x7F) {
@@ -243,7 +386,12 @@ namespace CrossPlatform {
             return size;
         }
 
-        inline static U8 UTF8SymbolSize(Byte byte) {
+        /**
+         * UTF8 symbol size
+         * @param byte First symbol byte
+         * @return UTF8 symbol size
+         */
+        inline static U8 UTF8SymbolSize(ConstLRef<Byte> byte) {
             U8 size = 0;
 
             if (byte <= 0x7F) {

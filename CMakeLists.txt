@@ -4,23 +4,33 @@ project(GSCrossPlatform)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(LIBRARY_NAME ${PROJECT_NAME}Library)
-set(PROJECT_DIR  ${PROJECT_SOURCE_DIR})
-set(INCLUDE_DIR  ${PROJECT_DIR}/include)
-set(SOURCE_DIR   ${PROJECT_DIR}/src)
-set(BINARY_DIR   ${PROJECT_BINARY_DIR})
+set(LIBRARY_NAME  ${PROJECT_NAME}Library)
+set(PROJECT_DIR   ${PROJECT_SOURCE_DIR})
+set(INCLUDE_DIR   ${PROJECT_DIR}/include)
+set(SOURCE_DIR    ${PROJECT_DIR}/src)
+set(BINARY_DIR    ${PROJECT_BINARY_DIR})
+set(INSTALL_DIR   ${CMAKE_INSTALL_PREFIX})
 
 message(STATUS "GSCrossPlatform")
-message(STATUS "    LibraryName: ${LIBRARY_NAME}")
-message(STATUS "    ProjectDir:  ${PROJECT_DIR}")
-message(STATUS "    IncludeDir:  ${INCLUDE_DIR}")
-message(STATUS "    SourceDir:   ${SOURCE_DIR}")
-message(STATUS "    BinaryDir:   ${BINARY_DIR}")
+message(STATUS "    LibraryName:  ${LIBRARY_NAME}")
+message(STATUS "    ProjectDir:   ${PROJECT_DIR}")
+message(STATUS "    IncludeDir:   ${INCLUDE_DIR}")
+message(STATUS "    SourceDir:    ${SOURCE_DIR}")
+message(STATUS "    BinaryDir:    ${BINARY_DIR}")
+message(STATUS "    InstallDir:   ${INSTALL_DIR}")
 
-set(PROJECT_INCLUDES ${INCLUDE_DIR})
+find_package(ICU CONFIG REQUIRED)
 
 add_library(${LIBRARY_NAME}
         ${SOURCE_DIR}/GS_CrossPlatformString.cpp
         ${SOURCE_DIR}/GS_CrossPlatformIO.cpp)
 
-target_include_directories(${LIBRARY_NAME} PRIVATE ${PROJECT_INCLUDES})
+target_include_directories(${LIBRARY_NAME} PRIVATE ${INCLUDE_DIR} ICU::ICU)
+
+target_link_directories(${LIBRARY_NAME} PRIVATE ICU::ICU)
+
+target_link_libraries(${LIBRARY_NAME} PRIVATE ICU::ICU)
+
+install(DIRECTORY "include" DESTINATION ${INSTALL_DIR})
+
+install(TARGETS ${LIBRARY_NAME} DESTINATION ${INSTALL_DIR}/lib)
