@@ -1,21 +1,23 @@
-from conans import ConanFile
+import os
+
+from conans import ConanFile, tools
 from conan.tools.cmake import CMake, CMakeToolchain
 from conan.tools.layout import cmake_layout
 
 
-class GSCrossPlatformConan(ConanFile):
-    name = "GSCrossPlatform"
+class GSCrossPlatformTestConan(ConanFile):
+    name = "GSCrossPlatformTest"
     version = "1.0"
     author = "Eldar eldar.salm@gmail.com"
     url = "https://github.com/conan-io/conan-center-index"
-    description = "GSCrossPlatform - library for easy supporting cross platform C++ programming."
-    topics = ("C++", "CrossPlatform")
+    description = "GSCrossPlatformTests - package for testing GSCrossPlatform library."
+    topics = ("C++", "CrossPlatform", "Tests")
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {"shared": False, "fPIC": True}
     generators = "cmake_find_package"
-    exports_sources = "CMakeLists.txt", "include/*", "src/*"
-    requires = "icu/70.1"
+    exports_sources = "*"
+    requires = "gtest/cci.20210126", "GSCrossPlatform/1.0"
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -34,13 +36,5 @@ class GSCrossPlatformConan(ConanFile):
         cmake.build()
 
     def test(self):
-        cmake = CMake(self)
-        cmake.test()
-
-    def package(self):
-        cmake = CMake(self)
-        cmake.install()
-
-    def package_info(self):
-        self.cpp_info.libs = ["GSCrossPlatformLibrary"]
-
+        cmd = os.path.join(self.cpp.build.bindirs[0], "GSCrossPlatformStringTests")
+        self.run(cmd, env="conanrun")
