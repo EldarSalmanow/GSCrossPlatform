@@ -40,16 +40,6 @@ target_link_directories(${LIBRARY_NAME} PRIVATE ${PROJECT_LIB_DIRS})
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE ${PROJECT_LIBS})
 
-#add_executable(GSCrossPlatformStringTests ${TESTS_DIR}/GS_CrossPlatformStringTests.cpp)
-#
-#target_include_directories(GSCrossPlatformStringTests PRIVATE ${PROJECT_INCLUDE_DIRS})
-#
-#target_link_directories(GSCrossPlatformStringTests PRIVATE ${PROJECT_LIB_DIRS})
-#
-#target_link_libraries(GSCrossPlatformStringTests PRIVATE ${PROJECT_LIBS} ${LIBRARY_NAME})
-
 install(DIRECTORY "include" DESTINATION ${INSTALL_DIR})
 
 install(TARGETS ${LIBRARY_NAME} DESTINATION ${INSTALL_DIR}/lib)
-
-#install(TARGETS GSCrossPlatformStringTests DESTINATION ${INSTALL_DIR}/test)

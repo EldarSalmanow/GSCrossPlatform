@@ -172,7 +172,7 @@ namespace CrossPlatform {
     };
 
     /**
-     * Byte encdians
+     * Byte endian
      */
     enum class ByteEndian {
         BigEndian,

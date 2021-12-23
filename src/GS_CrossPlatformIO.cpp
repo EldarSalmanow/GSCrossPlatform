@@ -18,38 +18,7 @@ namespace CrossPlatform {
 
     UDevice::~UDevice() = default;
 
-    UStream::UStream(Ptr<UDevice> device)
-            : _device(device) {}
-
     UStream::~UStream() = default;
-
-    Ptr<UDevice> UStream::getDevice() {
-        return _device;
-    }
-
-    LRef<UStream> UStream::operator>>(LRef<Byte> byte) {
-        byte = readByte();
-
-        return *this;
-    }
-
-    LRef<UStream> UStream::operator<<(Byte byte) {
-        writeByte(byte);
-
-        return *this;
-    }
-
-    LRef<UStream> UStream::operator>>(LRef<CodePoint> codePoint) {
-        codePoint = readCodePoint();
-
-        return *this;
-    }
-
-    LRef<UStream> UStream::operator<<(CodePoint codePoint) {
-        writeCodePoint(codePoint);
-
-        return *this;
-    }
 
     UFileDevice::UFileDevice(Ptr<FILE> file)
             : _file(file) {}
@@ -78,36 +47,8 @@ namespace CrossPlatform {
         return true;
     }
 
-    Byte UFileDevice::readByte() {
-        return std::fgetc(_file);
-    }
-
-    Void UFileDevice::writeByte(Byte byte) {
-        std::fputc(byte, _file);
-    }
-
-    UFileStream::UFileStream(Ptr<UFileDevice> device)
-            : UStream(device), _file(*device) {}
-
-    UFileStream::UFileStream(ConstLRef<UString> fileName, ConstLRef<FileOpenMode> mode)
-            : UStream(&_file), _file(nullptr) {
-        _file.open(fileName, mode);
-    }
-
-    Bool UFileStream::open(ConstLRef<UString> fileName, ConstLRef<FileOpenMode> mode) {
-        return _file.open(fileName, mode);
-    }
-
-    Byte UFileStream::readByte() {
-        return _file.readByte();
-    }
-
-    Void UFileStream::writeByte(Byte byte) {
-        _file.writeByte(byte);
-    }
-
-    CodePoint UFileStream::readCodePoint() {
-        auto byte = _file.readByte();
+    CodePoint UFileDevice::readCodePoint() {
+        auto byte = StaticCast<Byte>(std::fgetc(_file));
 
         auto size = Conversions::UTF8SymbolSize(byte);
 
@@ -120,7 +61,7 @@ namespace CrossPlatform {
         bytes.emplace_back(byte);
 
         for (auto i = 1; i < size; ++i) {
-            bytes.emplace_back(_file.readByte());
+            bytes.emplace_back(std::fgetc(_file));
         }
 
         auto error = ConversionError::NullError;
@@ -134,7 +75,7 @@ namespace CrossPlatform {
         return codePoint;
     }
 
-    Void UFileStream::writeCodePoint(CodePoint codePoint) {
+    Void UFileDevice::writeCodePoint(CodePoint codePoint) {
         auto error = ConversionError::NullError;
 
         auto bytes = Conversions::EncodeUTF8(codePoint, error);
@@ -144,8 +85,40 @@ namespace CrossPlatform {
         }
 
         for (auto &byte : bytes) {
-            _file.writeByte(byte);
+            std::fputc(byte, _file);
         }
+    }
+
+    UFileStream::UFileStream(Ptr<UFileDevice> device)
+            : _file(*device) {}
+
+    UFileStream::UFileStream(ConstLRef<UString> fileName, ConstLRef<FileOpenMode> mode)
+            : _file(nullptr) {
+        _file.open(fileName, mode);
+    }
+
+    Bool UFileStream::open(ConstLRef<UString> fileName, ConstLRef<FileOpenMode> mode) {
+        return _file.open(fileName, mode);
+    }
+
+    CodePoint UFileStream::readCodePoint() {
+        return _file.readCodePoint();
+    }
+
+    Void UFileStream::writeCodePoint(CodePoint codePoint) {
+        _file.writeCodePoint(codePoint);
+    }
+
+    LRef<UStream> UFileStream::operator>>(LRef<CodePoint> codePoint) {
+        codePoint = readCodePoint();
+
+        return *this;
+    }
+
+    LRef<UStream> UFileStream::operator<<(CodePoint codePoint) {
+        writeCodePoint(codePoint);
+
+        return *this;
     }
 
     Ptr<UFileDevice> COutDevice;
@@ -212,5 +185,4 @@ namespace CrossPlatform {
     LRef<UStream> UCIn() {
         return *CInStream;
     }
-
 }

@@ -19,17 +19,17 @@ namespace CrossPlatform {
     public:
 
         /**
-         * Reading byte from device
-         * @return Byte
+         * Reading codepoint from device
+         * @return Codepoint
          */
-        virtual Byte readByte() = 0;
+        virtual CodePoint readCodePoint() = 0;
 
         /**
-         * Writing byte to device
-         * @param byte Byte
+         * Writing codepoint to device
+         * @param codePoint Codepoint
          * @return
          */
-        virtual Void writeByte(Byte byte) = 0;
+        virtual Void writeCodePoint(CodePoint codePoint) = 0;
     };
 
     /**
@@ -39,40 +39,11 @@ namespace CrossPlatform {
     public:
 
         /**
-         * Constructor for UStream
-         * @param device Ptr to unicode device
-         */
-        UStream(Ptr<UDevice> device);
-
-    public:
-
-        /**
          * Virtual destructor
          */
         virtual ~UStream();
 
     public:
-
-        /**
-         * Getter for ptr to unicode device
-         * @return Ptr to unicode device
-         */
-        Ptr<UDevice> getDevice();
-
-    public:
-
-        /**
-         * Reading byte from stream
-         * @return Byte
-         */
-        virtual Byte readByte() = 0;
-
-        /**
-         * Writing byte to stream
-         * @param byte Byte
-         * @return
-         */
-        virtual Void writeByte(Byte byte) = 0;
 
         /**
          * Reading codepoint from stream
@@ -90,39 +61,18 @@ namespace CrossPlatform {
     public:
 
         /**
-         * Reading byte from stream
-         * @param byte Byte
-         * @return Reference to stream
-         */
-        virtual LRef<UStream> operator>>(LRef<Byte> byte);
-
-        /**
-         * Writing byte to stream
-         * @param byte Byte
-         * @return Reference to stream
-         */
-        virtual LRef<UStream> operator<<(Byte byte);
-
-        /**
          * Reading codepoint from stream
          * @param codePoint Codepoint
          * @return Reference to stream
          */
-        virtual LRef<UStream> operator>>(LRef<CodePoint> codePoint);
+        virtual LRef<UStream> operator>>(LRef<CodePoint> codePoint) = 0;
 
         /**
          * Writing codepoint to stream
          * @param codePoint Codepoint
          * @return Reference to stream
          */
-        virtual LRef<UStream> operator<<(CodePoint codePoint);
-
-    private:
-
-        /**
-         * Ptr to device
-         */
-        Ptr<UDevice> _device;
+        virtual LRef<UStream> operator<<(CodePoint codePoint) = 0;
     };
 
     /**
@@ -170,17 +120,17 @@ namespace CrossPlatform {
     public:
 
         /**
-         * Reading byte from file
-         * @return Byte
+         * Reading codepoint from file
+         * @return Codepoint
          */
-        Byte readByte() override;
+        CodePoint readCodePoint() override;
 
         /**
-         * Writing byte to file
-         * @param byte Byte
+         * Writing codepoint to file
+         * @param codePoint Codepoint
          * @return
          */
-        Void writeByte(Byte byte) override;
+        Void writeCodePoint(CodePoint codePoint) override;
 
     private:
 
@@ -222,30 +172,31 @@ namespace CrossPlatform {
     public:
 
         /**
-         * Reading byte from file
-         * @return Byte
-         */
-        Byte readByte() override;
-
-        /**
-         * Writing byte to file
-         * @param byte Byte
-         * @return
-         */
-        Void writeByte(Byte byte) override;
-
-        /**
-         * Reading codepoint from file
+         * Reading codepoint from stream
          * @return Codepoint
          */
         CodePoint readCodePoint() override;
 
         /**
-         * Writing codepoint to file
+         * Writing codepoint to stream
          * @param codePoint Codepoint
          * @return
          */
         Void writeCodePoint(CodePoint codePoint) override;
+
+        /**
+         * Reading codepoint from stream
+         * @param codePoint Codepoint to reading
+         * @return Stream
+         */
+        LRef<UStream> operator>>(LRef<CodePoint> codePoint) override;
+
+        /**
+         * Writing codepoint to stream
+         * @param codePoint Codepoint
+         * @return Stream
+         */
+        LRef<UStream> operator<<(CodePoint codePoint) override;
 
     private:
 
