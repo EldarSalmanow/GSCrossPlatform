@@ -42,4 +42,9 @@
     #warning "Unsupported compiler!"
 #endif
 
+/**
+ * Cross platform entry point function defining
+ */
+#define GS_MAIN int main(int argc, char **argv)
+
 #endif //GSCROSSPLATFORM_GS_CROSSPLATFORMDEFINES_H

@@ -5,6 +5,8 @@
 #include <GSCrossPlatform/GS_CrossPlatformTypes.h>
 #include <GSCrossPlatform/GS_CrossPlatformString.h>
 #include <GSCrossPlatform/GS_CrossPlatformIO.h>
+#include <GSCrossPlatform/GS_CrossPlatformUnicodeConversions.h>
+#include <GSCrossPlatform/GS_CrossPlatformException.h>
 
 using namespace CrossPlatform;
 

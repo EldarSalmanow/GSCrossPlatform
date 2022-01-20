@@ -122,50 +122,50 @@ using StringIterator = String::iterator;
  * Stream types
  */
 
-/**
- * Stream char type
- */
-using StreamCharType = CharType;
-
-/**
- * Output stream type
- */
-using OStream = std::basic_ostream<StreamCharType>;
-
-/**
- * Input stream type
- */
-using IStream = std::basic_istream<StreamCharType>;
-
-/**
- * Output file stream type
- */
-using OFStream = std::basic_ofstream<StreamCharType>;
-
-/**
- * Input file stream type
- */
-using IFStream = std::basic_ifstream<StreamCharType>;
-
-/**
- * Console output stream
- */
-inline OStream &COut = std::cout;
-
-/**
- * Console output error stream
- */
-inline OStream &CErr = std::cerr;
-
-/**
- * Console output log stream
- */
-inline OStream &CLog = std::clog;
-
-/**
- * Console input stream
- */
-inline IStream &CIn = std::cin;
+///**
+// * Stream char type
+// */
+//using StreamCharType = CharType;
+//
+///**
+// * Output stream type
+// */
+//using OStream = std::basic_ostream<StreamCharType>;
+//
+///**
+// * Input stream type
+// */
+//using IStream = std::basic_istream<StreamCharType>;
+//
+///**
+// * Output file stream type
+// */
+//using OFStream = std::basic_ofstream<StreamCharType>;
+//
+///**
+// * Input file stream type
+// */
+//using IFStream = std::basic_ifstream<StreamCharType>;
+//
+///**
+// * Console output stream
+// */
+//inline OStream &COut = std::cout;
+//
+///**
+// * Console output error stream
+// */
+//inline OStream &CErr = std::cerr;
+//
+///**
+// * Console output log stream
+// */
+//inline OStream &CLog = std::clog;
+//
+///**
+// * Console input stream
+// */
+//inline IStream &CIn = std::cin;
 
 /**
  * Container types
@@ -328,6 +328,18 @@ inline T ReinterpretCast(R value) {
 template<typename T, typename R>
 inline T StaticCast(R value) {
     return static_cast<T>(value);
+}
+
+/**
+ * Const cast
+ * @tparam T Out type
+ * @tparam R In type
+ * @param value Value
+ * @return Casted value
+ */
+template<typename T, typename R>
+inline T ConstCast(R value) {
+    return const_cast<T>(value);
 }
 
 /**
