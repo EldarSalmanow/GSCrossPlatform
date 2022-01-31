@@ -65,32 +65,6 @@ namespace CrossPlatform {
     template<typename T>
     BufferedDataStream<T>::~BufferedDataStream<T>() = default;
 
-//    template<typename T>
-//    StreamCursor<T>::StreamCursor(Ptr<BufferedDataStream<T>> stream);
-
-//    template<typename T>
-//    typename StreamCursor<T>::DataT StreamCursor<T>::Current() {
-//        auto data = _stream->Get();
-//
-//        Prev();
-//
-//        return data;
-//    }
-//
-//    template<typename T>
-//    Void StreamCursor<T>::Next() {
-//        StreamPosition position(Seek::Current, 1);
-//
-//        _stream->SetPosition(position);
-//    }
-//
-//    template<typename T>
-//    Void StreamCursor<T>::Prev() {
-//        StreamPosition position(Seek::Current, -1);
-//
-//        _stream->SetPosition(position);
-//    }
-
     UnicodeStream::~UnicodeStream() = default;
 
     BufferedUnicodeStream::~BufferedUnicodeStream() = default;
@@ -113,16 +87,18 @@ namespace CrossPlatform {
         virtual Bool GetPosition(LRef<StreamPosition> position) = 0;
 
         virtual Bool SetPosition(LRef<StreamPosition> position) = 0;
+
+        virtual Bool IsEOF() = 0;
     };
 
     class WindowsFileImplementation : public FileImplementation {
     public:
 
         WindowsFileImplementation()
-                : _fileDescriptor(INVALID_HANDLE_VALUE), _hasOwner(false) {};
+                : _fileDescriptor(INVALID_HANDLE_VALUE), _hasOwner(false), _isEOF(false) {};
 
         explicit WindowsFileImplementation(HANDLE handle, Bool hasOwner = false)
-                : _fileDescriptor(handle), _hasOwner(hasOwner) {}
+                : _fileDescriptor(handle), _hasOwner(hasOwner), _isEOF(false) {}
 
     public:
 
@@ -176,7 +152,9 @@ namespace CrossPlatform {
 
             auto result = ReadFile(_fileDescriptor, &byte, 1, &read, nullptr);
 
-            if (result == FALSE) {
+            if (result == FALSE && read == 0) {
+                _isEOF = true;
+
                 return false;
             }
 
@@ -236,11 +214,17 @@ namespace CrossPlatform {
             return true;
         }
 
+        Bool IsEOF() override {
+            return _isEOF;
+        }
+
     private:
 
         HANDLE _fileDescriptor;
 
         Bool _hasOwner;
+
+        Bool _isEOF;
     };
 
     UFileStream::UFileStream() {
@@ -262,6 +246,10 @@ namespace CrossPlatform {
 
     Bool UFileStream::Close() {
         return _implementation->Close();
+    }
+
+    Bool UFileStream::IsEOF() {
+        return _implementation->IsEOF();
     }
 
     UFileStream::DataT UFileStream::Get() {
