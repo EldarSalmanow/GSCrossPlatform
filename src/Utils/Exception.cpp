@@ -1,4 +1,4 @@
-#include <GSCrossPlatform/GS_CrossPlatformException.h>
+#include <GSCrossPlatform/Utils/Exception.h>
 
 namespace CrossPlatform {
 

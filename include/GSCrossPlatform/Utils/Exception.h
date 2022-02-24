@@ -1,7 +1,7 @@
-#ifndef GSCROSSPLATFORM_GS_CROSSPLATFORMEXCEPTION_H
-#define GSCROSSPLATFORM_GS_CROSSPLATFORMEXCEPTION_H
+#ifndef GSCROSSPLATFORM_EXCEPTION_H
+#define GSCROSSPLATFORM_EXCEPTION_H
 
-#include <GSCrossPlatform/GS_CrossPlatformString.h>
+#include <GSCrossPlatform/Containers.h>
 
 namespace CrossPlatform {
 
@@ -30,4 +30,4 @@ namespace CrossPlatform {
 
 }
 
-#endif //GSCROSSPLATFORM_GS_CROSSPLATFORMEXCEPTION_H
+#endif //GSCROSSPLATFORM_EXCEPTION_H

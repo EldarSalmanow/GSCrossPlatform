@@ -1,5 +1,5 @@
-#ifndef GSCROSSPLATFORM_GS_CROSSPLATFORMTYPES_H
-#define GSCROSSPLATFORM_GS_CROSSPLATFORMTYPES_H
+#ifndef GSCROSSPLATFORM_TYPES_H
+#define GSCROSSPLATFORM_TYPES_H
 
 #include <vector>
 #include <map>
@@ -10,7 +10,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <GSCrossPlatform/GS_CrossPlatformDefines.h>
+#include <GSCrossPlatform/Utils/Defines.h>
 
 /**
  * Integer types
@@ -354,4 +354,4 @@ inline T DynamicCast(R value) {
     return dynamic_cast<T>(value);
 }
 
-#endif //GSCROSSPLATFORM_GS_CROSSPLATFORMTYPES_H
+#endif //GSCROSSPLATFORM_TYPES_H

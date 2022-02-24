@@ -31,9 +31,9 @@ set(PROJECT_LIB_DIRS ${ICU_LIB_DIRS})
 set(PROJECT_LIBS ${ICU_LIBS})
 
 add_library(${LIBRARY_NAME}
-        ${SOURCE_DIR}/GS_CrossPlatformString.cpp
-        ${SOURCE_DIR}/GS_CrossPlatformIO.cpp
-        ${SOURCE_DIR}/GS_CrossPlatformException.cpp)
+        ${SOURCE_DIR}/Containers/String.cpp
+        ${SOURCE_DIR}/IO/IOStream.cpp
+        ${SOURCE_DIR}/Utils/Exception.cpp)
 
 target_include_directories(${LIBRARY_NAME} PRIVATE ${PROJECT_INCLUDE_DIRS})
 

@@ -1,7 +1,7 @@
-#ifndef GSCROSSPLATFORM_GS_CROSSPLATFORMSTRING_H
-#define GSCROSSPLATFORM_GS_CROSSPLATFORMSTRING_H
+#ifndef GSCROSSPLATFORM_STRING_H
+#define GSCROSSPLATFORM_STRING_H
 
-#include <GSCrossPlatform/GS_CrossPlatformContainers.h>
+#include <GSCrossPlatform/Containers/Iterator.h>
 
 namespace CrossPlatform {
 
@@ -113,6 +113,13 @@ namespace CrossPlatform {
          */
         UString(ConstPtr<C32> string);
 
+        /**
+         * Constructor for UString
+         * @param string String
+         * @param size Size
+         */
+        UString(ConstPtr<C32> string, U64 size);
+
     public:
 
         /**
@@ -205,6 +212,13 @@ namespace CrossPlatform {
         LRef<UString> operator+=(ConstLRef<UString> string);
 
         /**
+         * Adding string with string
+         * @param string String
+         * @return String
+         */
+        LRef<UString> operator+(ConstLRef<UString> string);
+
+        /**
          * Index string operator
          * @param index Index
          * @return Symbol at index
@@ -295,6 +309,10 @@ namespace CrossPlatform {
         Ptr<USymbol> _pointer;
     };
 
+    inline UString operator""_us(ConstPtr<C32> text, U64 size) {
+        return UString(text, size);
+    }
+
 }
 
-#endif //GSCROSSPLATFORM_GS_CROSSPLATFORMSTRING_H
+#endif //GSCROSSPLATFORM_STRING_H

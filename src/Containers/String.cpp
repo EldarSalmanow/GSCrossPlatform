@@ -1,8 +1,8 @@
 #include <unicode/uchar.h>
 
-#include <GSCrossPlatform/GS_CrossPlatformUnicodeConversions.h>
+#include <GSCrossPlatform/Encoding.h>
 
-#include <GSCrossPlatform/GS_CrossPlatformString.h>
+#include <GSCrossPlatform/Containers/String.h>
 
 namespace CrossPlatform {
 
@@ -44,6 +44,12 @@ namespace CrossPlatform {
 
     UString::UString(ConstPtr<C32> string) {
         for (U64 index = 0; string[index] != 0; ++index) {
+            _symbols.emplace_back(CCast<CodePoint>(string[index]));
+        }
+    }
+
+    UString::UString(ConstPtr<C32> string, U64 size) {
+        for (U64 index = 0; index < size && string[index] != 0; ++index) {
             _symbols.emplace_back(CCast<CodePoint>(string[index]));
         }
     }
@@ -135,6 +141,14 @@ namespace CrossPlatform {
             return *this;
         }
 
+        for (auto &symbol : string.getSymbols()) {
+            append(symbol);
+        }
+
+        return *this;
+    }
+
+    LRef<UString> UString::operator+(ConstLRef<UString> string) {
         for (auto &symbol : string.getSymbols()) {
             append(symbol);
         }

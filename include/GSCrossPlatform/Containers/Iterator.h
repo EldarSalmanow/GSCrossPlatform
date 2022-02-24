@@ -1,7 +1,7 @@
-#ifndef GSCROSSPLATFORM_GS_CROSSPLATFORMCONTAINERS_H
-#define GSCROSSPLATFORM_GS_CROSSPLATFORMCONTAINERS_H
+#ifndef GSCROSSPLATFORM_ITERATOR_H
+#define GSCROSSPLATFORM_ITERATOR_H
 
-#include <GSCrossPlatform/GS_CrossPlatformTypes.h>
+#include <GSCrossPlatform/Utils.h>
 
 namespace CrossPlatform {
 
@@ -51,4 +51,4 @@ namespace CrossPlatform {
 
 }
 
-#endif //GSCROSSPLATFORM_GS_CROSSPLATFORMCONTAINERS_H
+#endif //GSCROSSPLATFORM_ITERATOR_H

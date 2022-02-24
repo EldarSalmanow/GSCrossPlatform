@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <GSCrossPlatform/GS_CrossPlatformString.h>
+#include "GSCrossPlatform/Containers/String.h"
 
 using namespace CrossPlatform;
 
