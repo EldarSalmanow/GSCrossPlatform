@@ -34,11 +34,11 @@ protected:
 };
 
 TEST_F(CrossPlatformStringTests, CodePoints) {
-    auto symbols = _string->getSymbols();
+    auto symbols = _string->GetSymbols();
     auto codePoints = *_codePoints;
 
     for (auto index = 0; index < symbols.size() && index < _codePoints->size(); ++index) {
-        ASSERT_EQ(symbols[index].getCodePoint(), codePoints[index]);
+        ASSERT_EQ(symbols[index].GetCodePoint(), codePoints[index]);
     }
 }
 

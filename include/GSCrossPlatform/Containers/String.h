@@ -39,31 +39,31 @@ namespace CrossPlatform {
          * Is alpha symbol
          * @return Is alpha
          */
-        Bool isAlpha() const;
+        Bool IsAlpha() const;
 
         /**
          * Is digit symbol
          * @return Is digit
          */
-        Bool isDigit() const;
+        Bool IsDigit() const;
 
         /**
          * Is whitespace symbol
          * @return Is whitespace
          */
-        Bool isWhitespace() const;
+        Bool IsWhitespace() const;
 
         /**
          * Is IDStart symbol
          * @return Is IDStart
          */
-        Bool isIDStart() const;
+        Bool IsIDStart() const;
 
         /**
          * Is IDContinue symbol
          * @return Is IDContinue
          */
-        Bool isIDContinue() const;
+        Bool IsIDContinue() const;
 
     public:
 
@@ -71,7 +71,7 @@ namespace CrossPlatform {
          * Getter for codepoint
          * @return Codepoint
          */
-        CodePoint getCodePoint() const;
+        CodePoint GetCodePoint() const;
 
     public:
 
@@ -90,6 +90,9 @@ namespace CrossPlatform {
         CodePoint _codePoint;
     };
 
+    /**
+     * Defining UStringIterator
+     */
     class UStringIterator;
 
     /**
@@ -98,7 +101,10 @@ namespace CrossPlatform {
     class UString : public Iterable<UStringIterator> {
     public:
 
-        using IteratorT = UStringIterator;
+        /**
+         * Iterator type
+         */
+        using Iterator = typename Iterable<UStringIterator>::Iterator;
 
     public:
 
@@ -141,37 +147,37 @@ namespace CrossPlatform {
          * @param symbol Unicode symbol
          * @return
          */
-        Void append(ConstLRef<USymbol> symbol);
+        Void Append(ConstLRef<USymbol> symbol);
 
         /**
          * Size of unicode string
          * @return Size of string
          */
-        U64 size() const;
+        U64 Size() const;
 
         /**
          * Is empty unicode string
          * @return Is empty string
          */
-        Bool empty();
+        Bool Empty();
 
         /**
          * Converting string to bytes
          * @return String bytes
          */
-        Vector<Byte> asBytes() const;
+        Vector<Byte> AsBytes() const;
 
         /**
          * Converting unicode string to standard string
          * @return Standard string
          */
-        String asString() const;
+        String AsString() const;
 
         /**
          *
          * @return
          */
-        Vector<Byte> asCStringBytes() const;
+        Vector<Byte> AsCStringBytes() const;
 
     public:
 
@@ -179,7 +185,7 @@ namespace CrossPlatform {
          * Getter for unicode symbols
          * @return Unicode symbols
          */
-        Vector<USymbol> getSymbols() const;
+        Vector<USymbol> GetSymbols() const;
 
     public:
 
@@ -252,13 +258,13 @@ namespace CrossPlatform {
          *
          * @return
          */
-        IteratorT begin() override;
+        Iterator begin() override;
 
         /**
          *
          * @return
          */
-        IteratorT end() override;
+        Iterator end() override;
 
     public:
 
@@ -271,36 +277,36 @@ namespace CrossPlatform {
     class UStringIterator : public Iterator<USymbol, UStringIterator> {
     public:
 
-        explicit UStringIterator(USymbol *pointer)
+        explicit UStringIterator(Ptr<USymbol> pointer)
                 : _pointer(pointer) {}
 
     public:
 
-        LRef<DataT> operator*() override {
+        LRef<Data> operator*() override {
             return *_pointer;
         }
 
-        Ptr<DataT> operator->() override {
+        Ptr<Data> operator->() override {
             return _pointer;
         }
 
-        LRef<IteratorT> operator++() override {
+        LRef<ChildIterator> operator++() override {
             ++_pointer;
 
             return *this;
         }
 
-        LRef<IteratorT> operator--() override {
+        LRef<ChildIterator> operator--() override {
             --_pointer;
 
             return *this;
         }
 
-        Bool operator==(ConstLRef<IteratorT> iterator) const override {
+        Bool operator==(ConstLRef<ChildIterator> iterator) const override {
             return _pointer == iterator._pointer;
         }
 
-        Bool operator!=(ConstLRef<IteratorT> iterator) const override {
+        Bool operator!=(ConstLRef<ChildIterator> iterator) const override {
             return !(*this == iterator);
         }
 

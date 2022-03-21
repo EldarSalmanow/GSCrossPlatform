@@ -46,8 +46,12 @@ namespace CrossPlatform {
                 switch (conversionError) {
                     case ConversionError::InvalidCodePointError:
                         errorMessage += U"Invalid Unicode codepoint!";
+
+                        break;
                     case ConversionError::InvalidBytesError:
                         errorMessage += U"Invalid Unicode bytes!";
+
+                        break;
                 }
 
                 throw UException(errorMessage);
@@ -73,8 +77,12 @@ namespace CrossPlatform {
                 switch (conversionError) {
                     case ConversionError::InvalidCodePointError:
                         errorMessage += U"Invalid Unicode codepoint!";
+
+                        break;
                     case ConversionError::InvalidBytesError:
                         errorMessage += U"Invalid Unicode bytes!";
+
+                        break;
                 }
 
                 throw UException(errorMessage);
@@ -124,10 +132,16 @@ namespace CrossPlatform {
             switch (encoding) {
                 case Encoding::UTF8:
                     codePoint = DecodeUTF8(bytes, conversionError);
+
+                    break;
                 case Encoding::UTF16:
                     codePoint = DecodeUTF16(bytes, conversionError);
+
+                    break;
                 case Encoding::UTF32:
                     codePoint = DecodeUTF32(bytes, conversionError);
+
+                    break;
             }
 
             return codePoint;

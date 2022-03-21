@@ -1,15 +1,15 @@
 #ifndef GSCROSSPLATFORM_ITERATOR_H
 #define GSCROSSPLATFORM_ITERATOR_H
 
-#include <GSCrossPlatform/Utils.h>
+#include <GSCrossPlatform/Utils/Types.h>
 
 namespace CrossPlatform {
 
-    template<typename T>
+    template<typename IteratorT>
     class Iterable {
     public:
 
-        using IteratorT = T;
+        using Iterator = IteratorT;
 
     public:
 
@@ -17,18 +17,18 @@ namespace CrossPlatform {
 
     public:
 
-        virtual IteratorT begin() = 0;
+        virtual Iterator begin() = 0;
 
-        virtual IteratorT end() = 0;
+        virtual Iterator end() = 0;
     };
 
-    template<typename T, typename R>
+    template<typename DataT, typename IteratorT>
     class Iterator {
     public:
 
-        using DataT = T;
+        using Data = DataT;
 
-        using IteratorT = R;
+        using ChildIterator = IteratorT;
 
     public:
 
@@ -36,17 +36,17 @@ namespace CrossPlatform {
 
     public:
 
-        virtual LRef<DataT> operator*() = 0;
+        virtual LRef<Data> operator*() = 0;
 
-        virtual Ptr<DataT> operator->() = 0;
+        virtual Ptr<Data> operator->() = 0;
 
-        virtual LRef<IteratorT> operator++() = 0;
+        virtual LRef<ChildIterator> operator++() = 0;
 
-        virtual LRef<IteratorT> operator--() = 0;
+        virtual LRef<ChildIterator> operator--() = 0;
 
-        virtual Bool operator==(ConstLRef<IteratorT> iterator) const = 0;
+        virtual Bool operator==(ConstLRef<ChildIterator> iterator) const = 0;
 
-        virtual Bool operator!=(ConstLRef<IteratorT> iterator) const = 0;
+        virtual Bool operator!=(ConstLRef<ChildIterator> iterator) const = 0;
     };
 
 }

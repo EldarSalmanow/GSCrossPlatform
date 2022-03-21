@@ -12,32 +12,32 @@ namespace CrossPlatform {
     USymbol::USymbol(ConstLRef<C32> symbol)
             : _codePoint(symbol) {}
 
-    Bool USymbol::isAlpha() const {
+    Bool USymbol::IsAlpha() const {
         return u_isalpha(StaticCast<UChar32>(_codePoint));
     }
 
-    Bool USymbol::isDigit() const {
+    Bool USymbol::IsDigit() const {
         return u_isdigit(StaticCast<UChar32>(_codePoint));
     }
 
-    Bool USymbol::isWhitespace() const {
+    Bool USymbol::IsWhitespace() const {
         return u_isspace(StaticCast<UChar32>(_codePoint));
     }
 
-    Bool USymbol::isIDStart() const {
+    Bool USymbol::IsIDStart() const {
         return u_isIDStart(StaticCast<UChar32>(_codePoint));
     }
 
-    Bool USymbol::isIDContinue() const {
+    Bool USymbol::IsIDContinue() const {
         return u_isIDPart(StaticCast<UChar32>(_codePoint));
     }
 
-    CodePoint USymbol::getCodePoint() const {
+    CodePoint USymbol::GetCodePoint() const {
         return _codePoint;
     }
 
     Bool USymbol::operator==(ConstLRef<USymbol> symbol) const {
-        return _codePoint == symbol.getCodePoint();
+        return _codePoint == symbol.GetCodePoint();
     }
 
     UString::UString() = default;
@@ -55,32 +55,30 @@ namespace CrossPlatform {
     }
 
     UString::UString(ConstLRef<UString> string)
-            : _symbols(string.getSymbols()) {}
+            : _symbols(string.GetSymbols()) {}
 
     UString::UString(RRef<UString> string)
-            : _symbols(string.getSymbols()) {}
+            : _symbols(string.GetSymbols()) {}
 
-    Void UString::append(ConstLRef<USymbol> symbol) {
+    Void UString::Append(ConstLRef<USymbol> symbol) {
         _symbols.emplace_back(symbol);
     }
 
-    U64 UString::size() const {
+    U64 UString::Size() const {
         return _symbols.size();
     }
 
-    Bool UString::empty() {
-        return size() == 0;
+    Bool UString::Empty() {
+        return Size() == 0;
     }
 
-    Vector<Byte> UString::asBytes() const {
+    Vector<Byte> UString::AsBytes() const {
         Vector<Byte> bytes;
 
         for (auto &symbol : _symbols) {
-            auto codePoint = symbol.getCodePoint();
+            auto codePoint = symbol.GetCodePoint();
 
-            auto utf8bytes = Conversions::Encode(codePoint, Encoding::UTF8, ByteEndian::Unknown);
-
-            for (auto &byte : utf8bytes) {
+            for (auto &byte : Conversions::Encode(codePoint, Encoding::UTF8)) {
                 bytes.emplace_back(byte);
             }
         }
@@ -88,25 +86,25 @@ namespace CrossPlatform {
         return bytes;
     }
 
-    String UString::asString() const {
+    String UString::AsString() const {
         String string;
 
-        for (auto &byte : asBytes()) {
+        for (auto &byte : AsBytes()) {
             string += StaticCast<StringCharType>(byte);
         }
 
         return string;
     }
 
-    Vector<Byte> UString::asCStringBytes() const {
-        auto bytes = asBytes();
+    Vector<Byte> UString::AsCStringBytes() const {
+        auto bytes = AsBytes();
 
         bytes.emplace_back(0);
 
         return bytes;
     }
 
-    Vector<USymbol> UString::getSymbols() const {
+    Vector<USymbol> UString::GetSymbols() const {
         return _symbols;
     }
 
@@ -115,7 +113,7 @@ namespace CrossPlatform {
             return *this;
         }
 
-        _symbols = string.getSymbols();
+        _symbols = string.GetSymbols();
 
         return *this;
     }
@@ -125,13 +123,13 @@ namespace CrossPlatform {
             return *this;
         }
 
-        _symbols = string.getSymbols();
+        _symbols = string.GetSymbols();
 
         return *this;
     }
 
     LRef<UString> UString::operator+=(ConstLRef<USymbol> symbol) {
-        append(symbol);
+        Append(symbol);
 
         return *this;
     }
@@ -141,16 +139,16 @@ namespace CrossPlatform {
             return *this;
         }
 
-        for (auto &symbol : string.getSymbols()) {
-            append(symbol);
+        for (auto &symbol : string.GetSymbols()) {
+            Append(symbol);
         }
 
         return *this;
     }
 
     LRef<UString> UString::operator+(ConstLRef<UString> string) {
-        for (auto &symbol : string.getSymbols()) {
-            append(symbol);
+        for (auto &symbol : string.GetSymbols()) {
+            Append(symbol);
         }
 
         return *this;
@@ -165,11 +163,11 @@ namespace CrossPlatform {
     }
 
     Bool UString::operator==(ConstLRef<UString> string) const {
-        if (size() != string.size()) {
+        if (Size() != string.Size()) {
             return false;
         }
 
-        for (U64 index = 0; index < size(); ++index) {
+        for (U64 index = 0; index < Size(); ++index) {
             if (_symbols[index] != string[index]) {
                 return false;
             }
@@ -179,15 +177,15 @@ namespace CrossPlatform {
     }
 
     auto UString::operator<=>(ConstLRef<UString> string) const {
-        return size() <=> string.size();
+        return Size() <=> string.Size();
     }
 
-    UString::IteratorT UString::begin() {
+    UString::Iterator UString::begin() {
         return UStringIterator(_symbols.data());
     }
 
-    UString::IteratorT UString::end() {
-        return UStringIterator(_symbols.data() + size());
+    UString::Iterator UString::end() {
+        return UStringIterator(_symbols.data() + Size());
     }
 
 }

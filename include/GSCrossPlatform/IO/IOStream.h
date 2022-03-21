@@ -1,209 +1,69 @@
 #ifndef FEATURESTESTING_IOSTREAM_H
 #define FEATURESTESTING_IOSTREAM_H
 
-#include <GSCrossPlatform/Encoding.h>
-
-#include <GSCrossPlatform/IO/IOStreamTraits.h>
+#include <GSCrossPlatform/Containers.h>
 
 namespace CrossPlatform {
 
-    template<typename ValueT, typename TraitsT>
-    class IStreamBase {
-    public:
+    using OpenMode = U8;
 
-        using Traits = TraitsT;
+    inline Const<OpenMode> InMode = 0x1;
 
-        using Value  = typename Traits::Value;
+    inline Const<OpenMode> OutMode = 0x2;
 
-    public:
+    class File {
+    private:
 
-        virtual ~IStreamBase() = default;
-
-    public:
-
-        virtual Value Read() = 0;
-
-        virtual Void Write(Value value) = 0;
-    };
-
-    template<typename ValueT, typename TraitsT>
-    class StreamBase : public IStreamBase<ValueT, TraitsT> {
-    public:
-
-        using Traits = typename IStreamBase<ValueT, TraitsT>::Traits;
-
-        using Value  = typename Traits::Value;
-    };
-
-    template<typename ValueT, typename TraitsT>
-    class HandleStreamBase : public StreamBase<ValueT, TraitsT> {
-    public:
-
-        using Traits = typename StreamBase<ValueT, TraitsT>::Traits;
-
-        using Value  = typename Traits::Value;
-
-        using Handle = typename Traits::Handle;
+        explicit File(Ptr<FILE> fileDescriptor);
 
     public:
 
-        HandleStreamBase() = default;
-
-        explicit HandleStreamBase(ConstLRef<Handle> handle)
-                : _handle(handle) {}
+        ~File();
 
     public:
 
-        LRef<Handle> GetHandle() {
-            return _handle;
-        }
+        static UniquePtr<File> Create();
+
+        static UniquePtr<File> Create(Ptr<FILE> fileDescriptor);
+
+        static UniquePtr<File> Create(ConstLRef<UString> name, ConstLRef<OpenMode> mode);
+
+    public:
+
+        USymbol ReadSymbol();
+
+        Void WriteSymbol(USymbol symbol);
+
+        UString Read(USymbol delimiter = U'\n');
+
+        Vector<UString> ReadText();
+
+        UString ReadInput();
+
+        Void Write(ConstLRef<UString> string);
+
+        Bool Open(ConstLRef<UString> name, ConstLRef<OpenMode> mode);
+
+        Void Close();
+
+        Bool IsEOF();
+
+    public:
+
+        LRef<File> operator>>(LRef<UString> string);
+
+        LRef<File> operator<<(ConstLRef<UString> string);
 
     private:
 
-        Handle _handle;
+        Ptr<FILE> _fileDescriptor;
     };
 
-    template<typename ValueT, typename TraitsT>
-    class FileStreamBase : public HandleStreamBase<ValueT, TraitsT> {
-    public:
+    LRef<File> COut();
 
-        using Traits = typename HandleStreamBase<ValueT, TraitsT>::Traits;
+    LRef<File> CErr();
 
-        using Value  = typename Traits::Value;
-
-        using Handle = typename Traits::Handle;
-
-    public:
-
-        FileStreamBase() = default;
-
-        explicit FileStreamBase(ConstLRef<Handle> handle)
-                : HandleStreamBase<ValueT, TraitsT>(handle) {}
-
-        explicit FileStreamBase(ConstLRef<UString> name)
-                : FileStreamBase(name, InOutMode) {}
-
-        FileStreamBase(ConstLRef<UString> name, ConstLRef<OpenMode> mode) {
-            if (!Open(name, mode)) {
-                throw UException(U"Can`t open file \'"_us + name + U"\'!"_us);
-            }
-        }
-
-    public:
-
-        ~FileStreamBase() override {
-            Close();
-        }
-
-    public:
-
-        Bool Open(ConstLRef<UString> name, ConstLRef<OpenMode> mode) {
-            return this->GetHandle().Open(name, mode);
-        }
-
-        Void Close() {
-            return this->GetHandle().Close();
-        }
-
-    public:
-
-        Value Read() override {
-            return StaticCast<Value>(this->GetHandle().ReadByte());
-        }
-
-        Void Write(Value value) override {
-            return this->GetHandle().WriteByte(StaticCast<Byte>(value));
-        }
-    };
-
-    template<typename TraitsT>
-    class FileStreamBase<CodePoint, TraitsT> : public HandleStreamBase<CodePoint, TraitsT> {
-    public:
-
-        using Traits = typename HandleStreamBase<CodePoint, TraitsT>::Traits;
-
-        using Value  = typename Traits::Value;
-
-        using Handle = typename Traits::Handle;
-
-    public:
-
-        FileStreamBase() = default;
-
-        explicit FileStreamBase(ConstLRef<Handle> handle)
-                : HandleStreamBase<CodePoint, TraitsT>(handle) {}
-
-        explicit FileStreamBase(ConstLRef<UString> name)
-                : FileStreamBase(name, InOutMode) {}
-
-        FileStreamBase(ConstLRef<UString> name, ConstLRef<OpenMode> mode) {
-            if (!Open(name, mode)) {
-                throw UException(U"Can`t open file \'"_us + name + U"\'!"_us);
-            }
-        }
-
-    public:
-
-        ~FileStreamBase() override {
-            Close();
-        }
-
-    public:
-
-        Bool Open(ConstLRef<UString> name, ConstLRef<OpenMode> mode) {
-            return this->GetHandle().Open(name, mode);
-        }
-
-        Void Close() {
-            return this->GetHandle().Close();
-        }
-
-    public:
-
-        Value Read() override {
-            auto byte = this->GetHandle().ReadByte();
-
-            auto size = Conversions::SymbolSizeUTF8(byte);
-
-            Vector<Byte> bytes;
-
-            bytes.emplace_back(byte);
-
-            for (auto i = 1; i < size; ++i) {
-                bytes.emplace_back(this->GetHandle().ReadByte());
-            }
-
-            return Conversions::Decode(bytes, Encoding::UTF8);
-        }
-
-        Void Write(Value value) override {
-            for (auto &byte : Conversions::Encode(value, Encoding::UTF8)) {
-                this->GetHandle().WriteByte(byte);
-            }
-        }
-    };
-
-    template<typename ValueT>
-    using IStream = IStreamBase<ValueT, StreamTraits<ValueT>>;
-
-    template<typename ValueT>
-    using Stream = StreamBase<ValueT, StreamTraits<ValueT>>;
-
-    template<typename ValueT>
-    using HandleStream = HandleStreamBase<ValueT, HandleStreamTraits<ValueT, Handle>>;
-
-    template<typename ValueT>
-    using FileStream = FileStreamBase<ValueT, FileStreamTraits<ValueT, FileHandle>>;
-
-    using ByteFileStream = FileStream<Byte>;
-
-    using UnicodeFileStream = FileStream<CodePoint>;
-
-    LRef<UnicodeFileStream> UCOut();
-
-    LRef<UnicodeFileStream> UCIn();
-
-    LRef<UnicodeFileStream> UCErr();
+    LRef<File> CIn();
 
 }
 

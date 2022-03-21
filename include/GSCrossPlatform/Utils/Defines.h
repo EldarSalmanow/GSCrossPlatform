@@ -43,6 +43,15 @@
 #endif
 
 /**
+ * For resolve min and max macros conflict (minwindef.h)
+ */
+#if defined(GS_OS_WINDOWS)
+
+    #define NOMINMAX
+
+#endif
+
+/**
  * Cross platform entry point function defining
  */
 #define GS_MAIN int main(int argc, char **argv)

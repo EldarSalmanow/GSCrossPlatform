@@ -1,27 +1,252 @@
-#include <GSCrossPlatform/IO/IOStream.h>
+#include <GSCrossPlatform/Encoding.h>
 
-namespace CrossPlatform {
+#include <GSCrossPlatform/IO/IOStream.h>
 
 #if defined(GS_OS_WINDOWS)
 
-    static UnicodeFileStream COut(FileHandle(GetStdHandle(STD_OUTPUT_HANDLE)));
-
-    static UnicodeFileStream CIn(FileHandle(GetStdHandle(STD_INPUT_HANDLE)));
-
-    static UnicodeFileStream CErr(FileHandle(GetStdHandle(STD_ERROR_HANDLE)));
+    #include <Windows.h>
 
 #endif
 
-    LRef<UnicodeFileStream> UCOut() {
-        return COut;
+namespace CrossPlatform {
+
+//#if defined(GS_OS_WINDOWS)
+//
+//    static UnicodeFileStream COut(FileHandle(GetStdHandle(STD_OUTPUT_HANDLE)));
+//
+//    static UnicodeFileStream CIn(FileHandle(GetStdHandle(STD_INPUT_HANDLE)));
+//
+//    static UnicodeFileStream CErr(FileHandle(GetStdHandle(STD_ERROR_HANDLE)));
+//
+//#endif
+
+//    LRef<UnicodeFileStream> UCOut() {
+//        return COut;
+//    }
+//
+//    LRef<UnicodeFileStream> UCIn() {
+//        return CIn;
+//    }
+//
+//    LRef<UnicodeFileStream> UCErr() {
+//        return CErr;
+//    }
+
+    File::File(Ptr<FILE> fileDescriptor)
+            : _fileDescriptor(fileDescriptor) {}
+
+    File::~File() {
+        Close();
     }
 
-    LRef<UnicodeFileStream> UCIn() {
-        return CIn;
+    UniquePtr<File> File::Create() {
+        return File::Create(nullptr);
     }
 
-    LRef<UnicodeFileStream> UCErr() {
-        return CErr;
+    UniquePtr<File> File::Create(Ptr<FILE> fileDescriptor) {
+        auto file = new File(fileDescriptor);
+
+        return std::unique_ptr<File>(file);
+    }
+
+    UniquePtr<File> File::Create(ConstLRef<UString> name, ConstLRef<OpenMode> mode) {
+        UString stringOpenMode;
+
+        if (mode & InMode) {
+            stringOpenMode += U"r"_us;
+        }
+
+        if (mode & OutMode) {
+            stringOpenMode += U"w"_us;
+        }
+
+        auto fileDescriptor = std::fopen(name.AsString().c_str(), stringOpenMode.AsString().c_str());
+
+        if (!fileDescriptor) {
+            return nullptr;
+        }
+
+        return File::Create(fileDescriptor);
+    }
+
+    USymbol File::ReadSymbol() {
+        auto byte = StaticCast<Byte>(std::fgetc(_fileDescriptor));
+
+        auto size = Conversions::SymbolSizeUTF8(byte);
+
+        Vector<Byte> bytes;
+
+        bytes.emplace_back(byte);
+
+        for (auto i = 1; i < size; ++i) {
+            bytes.emplace_back(StaticCast<Byte>(std::fgetc(_fileDescriptor)));
+        }
+
+        ConversionError error = ConversionError::NullError;
+
+        return Conversions::Decode(bytes, Encoding::UTF8, error);
+    }
+
+    Void File::WriteSymbol(USymbol symbol) {
+        ConversionError error = ConversionError::NullError;
+
+        auto bytes = Conversions::Encode(symbol.GetCodePoint(), Encoding::UTF8, error);
+
+        for (auto &byte : bytes) {
+            std::fputc(byte, _fileDescriptor);
+        }
+    }
+
+    UString File::Read(USymbol delimiter) {
+        UString string;
+
+        auto symbol = ReadSymbol();
+
+        while (symbol != delimiter && !IsEOF()) {
+            string += symbol;
+
+            symbol = ReadSymbol();
+        }
+
+        return string;
+    }
+
+    Vector<UString> File::ReadText() {
+        Vector<UString> text;
+
+        while (!IsEOF()) {
+            auto string = Read();
+
+            text.emplace_back(string);
+        }
+
+        return text;
+    }
+
+    UString File::ReadInput() {
+        UString input;
+
+        while (!IsEOF()) {
+            auto string = Read();
+
+            string += U'\n';
+
+            input += string;
+        }
+
+        return input;
+    }
+
+    Void File::Write(ConstLRef<UString> string) {
+        for (auto &symbol : string.GetSymbols()) {
+            WriteSymbol(symbol);
+        }
+    }
+
+    Bool File::Open(ConstLRef<UString> name, ConstLRef<OpenMode> mode) {
+        Close();
+
+        UString stringOpenMode;
+
+        if (mode & InMode) {
+            stringOpenMode += U"r"_us;
+        }
+
+        if (mode & OutMode) {
+            stringOpenMode += U"w"_us;
+        }
+
+        _fileDescriptor = std::fopen(name.AsString().c_str(), stringOpenMode.AsString().c_str());
+
+        if (!_fileDescriptor) {
+            return false;
+        }
+
+        return true;
+    }
+
+    Void File::Close() {
+        if (_fileDescriptor) {
+            std::fclose(_fileDescriptor);
+        }
+    }
+
+    Bool File::IsEOF() {
+        if (!std::feof(_fileDescriptor)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    LRef<File> File::operator>>(LRef<UString> string) {
+        string = Read();
+
+        return *this;
+    }
+
+    LRef<File> File::operator<<(ConstLRef<UString> string) {
+        Write(string);
+
+        return *this;
+    }
+
+    UniquePtr<File> _COut;
+    UniquePtr<File> _CErr;
+    UniquePtr<File> _CIn;
+
+    class IOInit {
+    public:
+
+        IOInit() {
+            _COut = File::Create(stdout);
+            _CErr = File::Create(stderr);
+            _CIn = File::Create(stdin);
+
+#if defined(GS_OS_WINDOWS)
+
+            _codePage = GetConsoleOutputCP();
+
+            SetConsoleOutputCP(CP_UTF8);
+
+#endif
+        }
+
+    public:
+
+        ~IOInit() {
+#if defined(GS_OS_WINDOWS)
+
+            SetConsoleOutputCP(_codePage);
+
+#endif
+
+            _COut.reset();
+            _CErr.reset();
+            _CIn.reset();
+        }
+
+    private:
+
+#if defined(GS_OS_WINDOWS)
+
+        UINT _codePage;
+
+#endif
+    };
+
+    static IOInit Init;
+
+    LRef<File> COut() {
+        return *_COut;
+    }
+
+    LRef<File> CErr() {
+        return *_CErr;
+    }
+
+    LRef<File> CIn() {
+        return *_CIn;
     }
 
 }
