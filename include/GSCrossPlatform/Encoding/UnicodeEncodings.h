@@ -41,7 +41,7 @@ namespace CrossPlatform {
             auto bytes = Encode(codePoint, encoding, conversionError);
 
             if (conversionError != ConversionError::NullError) {
-                auto errorMessage = U"Conversion Error: "_us;
+                auto errorMessage = U"Encode(ConstLRef<CodePoint>, ConstLRef<Encoding>): Conversion Error! "_us;
 
                 switch (conversionError) {
                     case ConversionError::InvalidCodePointError:
@@ -72,7 +72,7 @@ namespace CrossPlatform {
             auto codePoint = Decode(bytes, encoding, conversionError);
 
             if (conversionError != ConversionError::NullError) {
-                auto errorMessage = U"Conversion Error: "_us;
+                auto errorMessage = U"Decode(ConstLRef<Vector<Byte>>, ConstLRef<Encoding>): Conversion Error! "_us;
 
                 switch (conversionError) {
                     case ConversionError::InvalidCodePointError:

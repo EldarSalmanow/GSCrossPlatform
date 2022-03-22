@@ -115,6 +115,18 @@ namespace CrossPlatform {
 
         /**
          * Constructor for UString
+         * @param symbols Symbols
+         */
+        UString(Vector<USymbol> symbols);
+
+        /**
+         * Constructor for UString
+         * @param bytes Bytes
+         */
+        UString(Vector<Byte> bytes);
+
+        /**
+         * Constructor for UString
          * @param string String
          */
         UString(ConstPtr<C32> string);
@@ -122,9 +134,14 @@ namespace CrossPlatform {
         /**
          * Constructor for UString
          * @param string String
-         * @param size Size
          */
-        UString(ConstPtr<C32> string, U64 size);
+        UString(ConstPtr<C8> string);
+
+        /**
+         * Constructor for UString
+         * @param string String
+         */
+        UString(String string);
 
     public:
 
@@ -222,7 +239,7 @@ namespace CrossPlatform {
          * @param string String
          * @return String
          */
-        LRef<UString> operator+(ConstLRef<UString> string);
+        UString operator+(ConstLRef<UString> string);
 
         /**
          * Index string operator
@@ -316,7 +333,7 @@ namespace CrossPlatform {
     };
 
     inline UString operator""_us(ConstPtr<C32> text, U64 size) {
-        return UString(text, size);
+        return UString(text);
     }
 
 }

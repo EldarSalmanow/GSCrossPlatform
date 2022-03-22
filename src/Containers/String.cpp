@@ -42,17 +42,63 @@ namespace CrossPlatform {
 
     UString::UString() = default;
 
+    UString::UString(Vector<USymbol> symbols)
+            : _symbols(std::move(symbols)) {}
+
+    UString::UString(Vector<Byte> bytes) {
+        for (U64 index = 0; index < bytes.size(); ++index) {
+            Vector<Byte> symbolBytes;
+
+            auto byte = bytes[index];
+
+            auto size = Conversions::SymbolSizeUTF8(byte);
+
+            symbolBytes.emplace_back(byte);
+
+            for (U64 i = 1; i < size; ++i, ++index) {
+                symbolBytes.emplace_back(bytes[index]);
+            }
+
+            auto codePoint = Conversions::Decode(symbolBytes, Encoding::UTF8);
+
+            _symbols.emplace_back(codePoint);
+        }
+    }
+
     UString::UString(ConstPtr<C32> string) {
         for (U64 index = 0; string[index] != 0; ++index) {
             _symbols.emplace_back(CCast<CodePoint>(string[index]));
         }
     }
 
-    UString::UString(ConstPtr<C32> string, U64 size) {
-        for (U64 index = 0; index < size && string[index] != 0; ++index) {
-            _symbols.emplace_back(CCast<CodePoint>(string[index]));
+    UString::UString(ConstPtr<C8> string) {
+        Vector<Byte> bytes;
+
+        for (U64 index = 0; string[index] != 0; ++index) {
+            bytes.emplace_back(string[index]);
+        }
+
+        for (U64 index = 0; index < bytes.size(); ++index) {
+            Vector<Byte> symbolBytes;
+
+            auto byte = bytes[index];
+
+            auto size = Conversions::SymbolSizeUTF8(byte);
+
+            symbolBytes.emplace_back(byte);
+
+            for (U64 i = 1; i < size; ++i, ++index) {
+                symbolBytes.emplace_back(bytes[index]);
+            }
+
+            auto codePoint = Conversions::Decode(symbolBytes, Encoding::UTF8);
+
+            _symbols.emplace_back(codePoint);
         }
     }
+
+    UString::UString(String string)
+            : UString(string.data()) {}
 
     UString::UString(ConstLRef<UString> string)
             : _symbols(string.GetSymbols()) {}
@@ -146,12 +192,14 @@ namespace CrossPlatform {
         return *this;
     }
 
-    LRef<UString> UString::operator+(ConstLRef<UString> string) {
+    UString UString::operator+(ConstLRef<UString> string) {
+        UString newString(*this);
+
         for (auto &symbol : string.GetSymbols()) {
-            Append(symbol);
+            newString.Append(symbol);
         }
 
-        return *this;
+        return newString;
     }
 
     LRef<USymbol> UString::operator[](ConstLRef<U64> index) {
