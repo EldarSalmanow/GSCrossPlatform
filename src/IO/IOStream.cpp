@@ -195,48 +195,6 @@ namespace CrossPlatform {
     UniquePtr<File> _CErr;
     UniquePtr<File> _CIn;
 
-    class IOInit {
-    public:
-
-        IOInit() {
-            _COut = File::Create(stdout);
-            _CErr = File::Create(stderr);
-            _CIn = File::Create(stdin);
-
-#if defined(GS_OS_WINDOWS)
-
-            _codePage = GetConsoleOutputCP();
-
-            SetConsoleOutputCP(CP_UTF8);
-
-#endif
-        }
-
-    public:
-
-        ~IOInit() {
-#if defined(GS_OS_WINDOWS)
-
-            SetConsoleOutputCP(_codePage);
-
-#endif
-
-            _COut.reset();
-            _CErr.reset();
-            _CIn.reset();
-        }
-
-    private:
-
-#if defined(GS_OS_WINDOWS)
-
-        UINT _codePage;
-
-#endif
-    };
-
-    static IOInit Init;
-
     LRef<File> COut() {
         return *_COut;
     }
@@ -248,5 +206,53 @@ namespace CrossPlatform {
     LRef<File> CIn() {
         return *_CIn;
     }
+
+    U32 CodePage::GetCodePage() {
+#if defined(GS_OS_WINDOWS)
+
+        return GetConsoleOutputCP();
+
+#else
+
+        return 0;
+
+#endif
+    }
+
+    Void CodePage::SetCodePage(U32 codePage) {
+#if defined(GS_OS_WINDOWS)
+
+        SetConsoleOutputCP(codePage);
+
+#endif
+    }
+
+    class IOInit {
+    public:
+
+        IOInit() {
+            _COut = File::Create(stdout);
+            _CErr = File::Create(stderr);
+            _CIn = File::Create(stdin);
+
+            _codePage = CodePage::GetCodePage();
+        }
+
+    public:
+
+        ~IOInit() {
+            CodePage::SetCodePage(_codePage);
+
+            _COut.reset();
+            _CErr.reset();
+            _CIn.reset();
+        }
+
+    private:
+
+        U32 _codePage;
+    };
+
+    static IOInit Init;
 
 }

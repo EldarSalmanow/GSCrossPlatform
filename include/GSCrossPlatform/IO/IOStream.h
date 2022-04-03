@@ -65,6 +65,23 @@ namespace CrossPlatform {
 
     LRef<File> CIn();
 
+    class CodePage {
+    public:
+
+        /**
+         * Getting code page
+         * @return Code page
+         */
+        static U32 GetCodePage();
+
+        /**
+         * Setting code page
+         * @param codePage Code page
+         * @return
+         */
+        static Void SetCodePage(U32 codePage);
+    };
+
 }
 
 #endif //FEATURESTESTING_IOSTREAM_H
