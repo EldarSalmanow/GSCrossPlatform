@@ -3,7 +3,10 @@
 
 #include <vector>
 #include <map>
+#include <deque>
+#include <stack>
 #include <any>
+#include <exception>
 #include <memory>
 #include <string>
 #include <sstream>
@@ -122,50 +125,50 @@ using StringIterator = String::iterator;
  * Stream types
  */
 
-///**
-// * Stream char type
-// */
-//using StreamCharType = CharType;
-//
-///**
-// * Output stream type
-// */
-//using OStream = std::basic_ostream<StreamCharType>;
-//
-///**
-// * Input stream type
-// */
-//using IStream = std::basic_istream<StreamCharType>;
-//
-///**
-// * Output file stream type
-// */
-//using OFStream = std::basic_ofstream<StreamCharType>;
-//
-///**
-// * Input file stream type
-// */
-//using IFStream = std::basic_ifstream<StreamCharType>;
-//
-///**
-// * Console output stream
-// */
-//inline OStream &COut = std::cout;
-//
-///**
-// * Console output error stream
-// */
-//inline OStream &CErr = std::cerr;
-//
-///**
-// * Console output log stream
-// */
-//inline OStream &CLog = std::clog;
-//
-///**
-// * Console input stream
-// */
-//inline IStream &CIn = std::cin;
+/**
+ * Stream char type
+ */
+using StreamCharType = CharType;
+
+/**
+ * Output stream type
+ */
+using OStream = std::basic_ostream<StreamCharType>;
+
+/**
+ * Input stream type
+ */
+using IStream = std::basic_istream<StreamCharType>;
+
+/**
+ * Output file stream type
+ */
+using OFStream = std::basic_ofstream<StreamCharType>;
+
+/**
+ * Input file stream type
+ */
+using IFStream = std::basic_ifstream<StreamCharType>;
+
+/**
+ * Console output stream
+ */
+inline OStream &COut = std::cout;
+
+/**
+ * Console output error stream
+ */
+inline OStream &CErr = std::cerr;
+
+/**
+ * Console output log stream
+ */
+inline OStream &CLog = std::clog;
+
+/**
+ * Console input stream
+ */
+inline IStream &CIn = std::cin;
 
 /**
  * Container types
@@ -196,9 +199,32 @@ template<typename T, typename R>
 using MapIterator = typename Map<T, R>::iterator;
 
 /**
+ * Deque type
+ */
+template<typename T>
+using Deque = std::deque<T>;
+
+/**
+ * Deque iterator type
+ */
+template<typename T>
+using DequeIterator = typename Deque<T>::iterator;
+
+/**
+ * Stack type
+ */
+template<typename T>
+using Stack = std::stack<T>;
+
+/**
  * Any type
  */
 using Any = std::any;
+
+/**
+ * Exception type
+ */
+using Exception = std::exception;
 
 /**
  * Memory types

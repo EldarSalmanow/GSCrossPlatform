@@ -22,13 +22,13 @@ namespace CrossPlatform {
     public:
 
         /**
-         * Constructor for USymbol
+         * Constructor for unicode symbol
          * @param codePoint Unicode codepoint
          */
         USymbol(ConstLRef<CodePoint> codePoint);
 
         /**
-         * Constructor for USymbol
+         * Constructor for unicode symbol
          * @param symbol Symbol
          */
         USymbol(ConstLRef<C32> symbol);
@@ -109,36 +109,36 @@ namespace CrossPlatform {
     public:
 
         /**
-         * Default UString constructor
+         * Default unicode string constructor
          */
         UString();
 
         /**
-         * Constructor for UString
+         * Constructor for unicode string
          * @param symbols Symbols
          */
         UString(Vector<USymbol> symbols);
 
         /**
-         * Constructor for UString
+         * Constructor for unicode string
          * @param bytes Bytes
          */
         UString(Vector<Byte> bytes);
 
         /**
-         * Constructor for UString
+         * Constructor for unicode string
          * @param string String
          */
         UString(ConstPtr<C32> string);
 
         /**
-         * Constructor for UString
+         * Constructor for unicode string
          * @param string String
          */
         UString(ConstPtr<C8> string);
 
         /**
-         * Constructor for UString
+         * Constructor for unicode string
          * @param string String
          */
         UString(String string);
@@ -146,13 +146,13 @@ namespace CrossPlatform {
     public:
 
         /**
-         * Copy constructor for UString
+         * Copy constructor for unicode string
          * @param string String
          */
         UString(ConstLRef<UString> string);
 
         /**
-         * Move copy constructor for UString
+         * Move copy constructor for unicode string
          * @param string String
          */
         UString(RRef<UString> string);
@@ -272,14 +272,14 @@ namespace CrossPlatform {
     public:
 
         /**
-         *
-         * @return
+         * Begin string iterator
+         * @return Begin iterator
          */
         Iterator begin() override;
 
         /**
-         *
-         * @return
+         * End string iterator
+         * @return End iterator
          */
         Iterator end() override;
 
@@ -291,48 +291,100 @@ namespace CrossPlatform {
         Vector<USymbol> _symbols;
     };
 
+    /**
+     * Unicode string iterator
+     */
     class UStringIterator : public Iterator<USymbol, UStringIterator> {
     public:
 
+        /**
+         * Constructor for unicode string iterator
+         * @param pointer Pointer to unicode symbol
+         */
         explicit UStringIterator(Ptr<USymbol> pointer)
                 : _pointer(pointer) {}
 
     public:
 
+        /**
+         * Dereference operator
+         * @return Data
+         */
         LRef<Data> operator*() override {
             return *_pointer;
         }
 
+        /**
+         * Member access operator
+         * @return Pointer to data
+         */
         Ptr<Data> operator->() override {
             return _pointer;
         }
 
+        /**
+         * Increment operator
+         * @return Incremented iterator
+         */
         LRef<ChildIterator> operator++() override {
             ++_pointer;
 
             return *this;
         }
 
+        /**
+         * Decrement operator
+         * @return Decremented iterator
+         */
         LRef<ChildIterator> operator--() override {
             --_pointer;
 
             return *this;
         }
 
+        /**
+         * Comparing operator
+         * @param iterator Iterator for comparing
+         * @return Is equals
+         */
         Bool operator==(ConstLRef<ChildIterator> iterator) const override {
             return _pointer == iterator._pointer;
         }
 
+        /**
+         * Not comparing operator
+         * @param iterator Iterator for comparing
+         * @return Is not equals
+         */
         Bool operator!=(ConstLRef<ChildIterator> iterator) const override {
             return !(*this == iterator);
         }
 
     private:
 
+        /**
+         * Pointer to unicode symbol
+         */
         Ptr<USymbol> _pointer;
     };
 
+    /**
+     * Unicode string operator
+     * @param text Text
+     * @param size Size of text
+     * @return Unicode string
+     */
     inline UString operator""_us(ConstPtr<C32> text, U64 size) {
+        return UString(text);
+    }
+
+    /**
+     * Unicode string operator
+     * @param text Text
+     * @param size Size of text
+     * @return Unicode string
+     */
+    inline UString operator""_us(ConstPtr<C8> text, U64 size) {
         return UString(text);
     }
 

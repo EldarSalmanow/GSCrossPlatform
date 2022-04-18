@@ -8,23 +8,41 @@ namespace CrossPlatform {
     /**
      * Class for supporting unicode exceptions
      */
-    class UException : public std::exception {
+    class UException : public Exception {
     public:
 
+        /**
+         * Constructor for unicode exception
+         * @param message Message
+         */
         explicit UException(ConstLRef<UString> message);
 
     public:
 
-        UString getMessage() const;
+        /**
+         * Getter for exception message
+         * @return Exception message
+         */
+        UString GetMessage() const;
 
     public:
 
+        /**
+         * Getting message as const symbol pointer
+         * @return Const symbol pointer
+         */
         ConstPtr<C8> what() const override;
 
     private:
 
+        /**
+         * Unicode string message
+         */
         UString _message;
 
+        /**
+         * Standard string message
+         */
         String _stringMessage;
     };
 

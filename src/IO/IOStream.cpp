@@ -191,20 +191,20 @@ namespace CrossPlatform {
         return *this;
     }
 
-    UniquePtr<File> _COut;
-    UniquePtr<File> _CErr;
-    UniquePtr<File> _CIn;
+    UniquePtr<File> _UCOut;
+    UniquePtr<File> _UCErr;
+    UniquePtr<File> _UCIn;
 
-    LRef<File> COut() {
-        return *_COut;
+    LRef<File> UCOut() {
+        return *_UCOut;
     }
 
-    LRef<File> CErr() {
-        return *_CErr;
+    LRef<File> UCErr() {
+        return *_UCErr;
     }
 
-    LRef<File> CIn() {
-        return *_CIn;
+    LRef<File> UCIn() {
+        return *_UCIn;
     }
 
     U32 CodePage::GetCodePage() {
@@ -231,9 +231,9 @@ namespace CrossPlatform {
     public:
 
         IOInit() {
-            _COut = File::Create(stdout);
-            _CErr = File::Create(stderr);
-            _CIn = File::Create(stdin);
+            _UCOut = File::Create(stdout);
+            _UCErr = File::Create(stderr);
+            _UCIn = File::Create(stdin);
 
             _codePage = CodePage::GetCodePage();
         }
@@ -243,9 +243,9 @@ namespace CrossPlatform {
         ~IOInit() {
             CodePage::SetCodePage(_codePage);
 
-            _COut.reset();
-            _CErr.reset();
-            _CIn.reset();
+            _UCOut.reset();
+            _UCErr.reset();
+            _UCIn.reset();
         }
 
     private:
