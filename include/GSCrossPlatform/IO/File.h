@@ -1,5 +1,5 @@
-#ifndef FEATURESTESTING_IOSTREAM_H
-#define FEATURESTESTING_IOSTREAM_H
+#ifndef GSCROSSPLATFORM_FILE_H
+#define GSCROSSPLATFORM_FILE_H
 
 #include <GSCrossPlatform/Containers.h>
 
@@ -104,14 +104,6 @@ namespace CrossPlatform {
         Void Write(ConstLRef<UString> string);
 
         /**
-         * Open file
-         * @param name Name
-         * @param mode Mode
-         * @return Is opened
-         */
-        Bool Open(ConstLRef<UString> name, ConstLRef<OpenMode> mode);
-
-        /**
          * Close file
          * @return
          */
@@ -187,4 +179,4 @@ namespace CrossPlatform {
 
 }
 
-#endif //FEATURESTESTING_IOSTREAM_H
+#endif //GSCROSSPLATFORM_FILE_H

@@ -32,8 +32,7 @@ set(PROJECT_LIBS ${ICU_LIBS})
 
 add_library(${LIBRARY_NAME}
         ${SOURCE_DIR}/Containers/String.cpp
-#        ${SOURCE_DIR}/IO/HandleTraits.cpp
-        ${SOURCE_DIR}/IO/IOStream.cpp
+        ${SOURCE_DIR}/IO/File.cpp
         ${SOURCE_DIR}/Utils/Exception.cpp)
 
 target_include_directories(${LIBRARY_NAME} PRIVATE ${PROJECT_INCLUDE_DIRS})

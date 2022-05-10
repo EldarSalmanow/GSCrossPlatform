@@ -1,6 +1,6 @@
 #include <GSCrossPlatform/Encoding.h>
 
-#include <GSCrossPlatform/IO/IOStream.h>
+#include <GSCrossPlatform/IO/File.h>
 
 #if defined(GS_OS_WINDOWS)
 
@@ -9,28 +9,6 @@
 #endif
 
 namespace CrossPlatform {
-
-//#if defined(GS_OS_WINDOWS)
-//
-//    static UnicodeFileStream COut(FileHandle(GetStdHandle(STD_OUTPUT_HANDLE)));
-//
-//    static UnicodeFileStream CIn(FileHandle(GetStdHandle(STD_INPUT_HANDLE)));
-//
-//    static UnicodeFileStream CErr(FileHandle(GetStdHandle(STD_ERROR_HANDLE)));
-//
-//#endif
-
-//    LRef<UnicodeFileStream> UCOut() {
-//        return COut;
-//    }
-//
-//    LRef<UnicodeFileStream> UCIn() {
-//        return CIn;
-//    }
-//
-//    LRef<UnicodeFileStream> UCErr() {
-//        return CErr;
-//    }
 
     File::File(Ptr<FILE> fileDescriptor)
             : _fileDescriptor(fileDescriptor) {}
@@ -143,28 +121,6 @@ namespace CrossPlatform {
         }
     }
 
-    Bool File::Open(ConstLRef<UString> name, ConstLRef<OpenMode> mode) {
-        Close();
-
-        UString stringOpenMode;
-
-        if (mode & InMode) {
-            stringOpenMode += U"r"_us;
-        }
-
-        if (mode & OutMode) {
-            stringOpenMode += U"w"_us;
-        }
-
-        _fileDescriptor = std::fopen(name.AsString().c_str(), stringOpenMode.AsString().c_str());
-
-        if (!_fileDescriptor) {
-            return false;
-        }
-
-        return true;
-    }
-
     Void File::Close() {
         if (_fileDescriptor) {
             std::fclose(_fileDescriptor);
@@ -236,6 +192,12 @@ namespace CrossPlatform {
             _UCIn = File::Create(stdin);
 
             _codePage = CodePage::GetCodePage();
+
+#if defined(GS_OS_WINDOWS)
+
+            CodePage::SetCodePage(CP_UTF8);
+
+#endif
         }
 
     public:
