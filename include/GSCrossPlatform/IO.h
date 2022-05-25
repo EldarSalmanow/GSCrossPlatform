@@ -5,6 +5,6 @@
  * This file include CrossPlatform IO Module
  */
 
-#include <GSCrossPlatform/IO/IOStream.h>
+#include <GSCrossPlatform/IO/File.h>
 
 #endif //FEATURESTESTING_IO_H

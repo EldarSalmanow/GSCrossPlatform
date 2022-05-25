@@ -1,5 +1,5 @@
-#ifndef GSCROSSPLATFORM_GS_CROSSPLATFORM_H
-#define GSCROSSPLATFORM_GS_CROSSPLATFORM_H
+#ifndef GSCROSSPLATFORM_CROSSPLATFORM_H
+#define GSCROSSPLATFORM_CROSSPLATFORM_H
 
 #include <GSCrossPlatform/Containers.h>
 #include <GSCrossPlatform/Encoding.h>
@@ -8,4 +8,4 @@
 
 using namespace CrossPlatform;
 
-#endif //GSCROSSPLATFORM_GS_CROSSPLATFORM_H
+#endif //GSCROSSPLATFORM_CROSSPLATFORM_H
