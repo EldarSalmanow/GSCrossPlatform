@@ -3,7 +3,7 @@
 namespace CrossPlatform {
 
     UException::UException(ConstLRef<UString> message)
-            : _message(message), _stringMessage(_message.AsString()) {}
+            : _message(message), _stringMessage(_message.AsUTF8String()) {}
 
     UString UException::GetMessage() const {
         return _message;

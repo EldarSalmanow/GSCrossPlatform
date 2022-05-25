@@ -5,310 +5,222 @@
 
 namespace CrossPlatform {
 
-    /**
-     * Unicode encodings
-     */
-    enum class Encoding {
-        UTF8,
-        UTF16,
-        UTF32
-    };
+    inline constexpr CodePoint InvalidCodePoint = 0x10FFFF + 1;
 
-    /**
-     * Conversion errors
-     */
-    enum class ConversionError {
-        NullError,
-        InvalidCodePointError,
-        InvalidBytesError
-    };
+    inline Vector<Byte> InvalidBytes = {};
 
-    /**
-     * Class for supporting unicode conversions
-     */
-    class Conversions {
-    public:
+    inline constexpr U8 UTF8Size(ConstLRef<CodePoint> codePoint) {
+        auto size = 0;
 
-        /**
-         * Decode unicode symbol
-         * @param bytes Unicode symbol bytes
-         * @param encoding Encoding
-         * @return Codepoint
-         */
-        inline static Vector<Byte> Encode(ConstLRef<CodePoint> codePoint, ConstLRef<Encoding> encoding) {
-            auto conversionError = ConversionError::NullError;
+        if (codePoint <= 0x7F) {
+            size = 1;
+        } else if (codePoint <= 0x7FF) {
+            size = 2;
+        } else if (codePoint <= 0xFFFF) {
+            size = 3;
+        } else if (codePoint <= 0x10FFFF) {
+            size = 4;
+        }
 
-            auto bytes = Encode(codePoint, encoding, conversionError);
+        return size;
+    }
 
-            if (conversionError != ConversionError::NullError) {
-                auto errorMessage = U"Encode(ConstLRef<CodePoint>, ConstLRef<Encoding>): Conversion Error! "_us;
+    inline constexpr U8 UTF8Size(ConstLRef<Byte> byte) {
+        auto size = 0;
 
-                switch (conversionError) {
-                    case ConversionError::InvalidCodePointError:
-                        errorMessage += U"Invalid Unicode codepoint!";
+        if (byte <= 0x7F) {
+            size = 1;
+        } else if (byte <= 0xDF) {
+            size = 2;
+        } else if (byte <= 0xEF) {
+            size = 3;
+        } else if (byte <= 0xF4) {
+            size = 4;
+        }
 
-                        break;
-                    case ConversionError::InvalidBytesError:
-                        errorMessage += U"Invalid Unicode bytes!";
+        return size;
+    }
 
-                        break;
-                }
+    inline Vector<Byte> ToUTF8(ConstLRef<CodePoint> codePoint) {
+        auto bytes = InvalidBytes;
 
-                throw UException(errorMessage);
+        auto size = UTF8Size(codePoint);
+
+        if (size == 1) {
+            bytes.emplace_back(StaticCast<Byte>(codePoint));
+        } else if (size == 2) {
+            bytes.emplace_back(0xC0 + (codePoint  >> 6));
+            bytes.emplace_back(0x80 + (codePoint         & 0x3F));
+        } else if (size == 3) {
+            bytes.emplace_back(0xE0 + (codePoint  >> 12));
+            bytes.emplace_back(0x80 + ((codePoint >> 6)  & 0x3F));
+            bytes.emplace_back(0x80 + (codePoint         & 0x3F));
+        } else if (size == 4) {
+            bytes.emplace_back(0xF0 + (codePoint  >> 18));
+            bytes.emplace_back(0x80 + ((codePoint >> 12) & 0x3F));
+            bytes.emplace_back(0x80 + ((codePoint >> 6)  & 0x3F));
+            bytes.emplace_back(0x80 + (codePoint         & 0x3F));
+        }
+
+        return bytes;
+    }
+
+    inline CodePoint FromUTF8(ConstLRef<Vector<Byte>> bytes) {
+        auto codePoint = InvalidCodePoint;
+
+        auto size = UTF8Size(bytes[0]);
+
+        if (size == 1) {
+            codePoint = bytes[0];
+        } else if (size == 2) {
+            codePoint = ((bytes[0] & 0x1F) << 6)
+                      +  (bytes[1] & 0x3F);
+        } else if (size == 3) {
+            codePoint = ((bytes[0] & 0x0F) << 12)
+                      + ((bytes[1] & 0x3F) << 6)
+                      +  (bytes[2] & 0x3F);
+        } else if (size == 4) {
+            codePoint = ((bytes[0] & 0x07) << 18)
+                      + ((bytes[1] & 0x3F) << 12)
+                      + ((bytes[2] & 0x3F) << 6)
+                      +  (bytes[3] & 0x3F);
+        }
+
+        return codePoint;
+    }
+
+    // TODO add supporting UTF-16
+
+    inline Vector<Byte> ToUTF16(ConstLRef<CodePoint> codePoint) {
+        auto bytes = InvalidBytes;
+
+//        if (codePoint <= 0xD7FF || (codePoint >= 0xE000 && codePoint <= 0xFFFF)) {
+//            bytes.emplace_back(codePoint >> 8);
+//            bytes.emplace_back(codePoint & 0xFF);
+//        } else {
+//            uint16_t high = ((codePoint - 0x10000) >> 10)  + 0xD800;
+//            uint16_t low = ((codePoint - 0x10000) & 0x3FF) + 0xDC00;
+//            bytes.emplace_back(high >> 8);
+//            bytes.emplace_back(high & 0xFF);
+//            bytes.emplace_back(low >> 8);
+//            bytes.emplace_back(low & 0xFF);
+//        }
+
+        return bytes;
+    }
+
+    inline CodePoint FrmUTF16(ConstLRef<Vector<Byte>> bytes) {
+        auto codePoint = InvalidCodePoint;
+
+//        auto size = utf16_size();
+//
+//        if (size == 2) {
+//            codePoint = (bytes[0] << 8)
+//                       + bytes[1];
+//        }
+//        if (size == 4) {
+//            codePoint = 0x10000 + ((((bytes[0] << 8) + bytes[1]) - 0xD800) << 10)
+//                    + (((bytes[2] << 8) + bytes[3]) - 0xDC00);
+//        }
+
+        return codePoint;
+    }
+
+    inline Vector<Byte> ToUTF32(ConstLRef<CodePoint> codePoint) {
+        auto bytes = InvalidBytes;
+
+        bytes.emplace_back(codePoint  >> 24);
+        bytes.emplace_back((codePoint >> 16) & 0xFF);
+        bytes.emplace_back((codePoint >> 8)  & 0xFF);
+        bytes.emplace_back(codePoint         & 0xFF);
+
+        return bytes;
+    }
+
+    inline CodePoint FromUTF32(ConstLRef<Vector<Byte>> bytes) {
+        auto codePoint = InvalidCodePoint;
+
+        codePoint = (bytes[0] << 24)
+                  + (bytes[1] << 16)
+                  + (bytes[2] << 8)
+                  + bytes[3];
+
+        return codePoint;
+    }
+
+    inline std::u16string UTF8ToUTF16(ConstLRef<std::string> string) {
+        std::u16string u16string;
+
+        return u16string;
+    }
+
+    inline std::u32string UTF8ToUTF32(ConstLRef<std::string> string) {
+        std::u32string u32string;
+
+        for (U64 index = 0; index < string.size(); ++index) {
+            auto byte = StaticCast<Byte>(string[index]);
+
+            auto symbolSize = UTF8Size(byte);
+
+            Vector<Byte> bytes;
+
+            bytes.emplace_back(byte);
+
+            for (U64 i = 1; i < symbolSize; ++i) {
+                ++index;
+
+                byte = StaticCast<Byte>(string[index]);
+
+                bytes.emplace_back(byte);
             }
 
-            return bytes;
+            auto codePoint = FromUTF8(bytes);
+
+            u32string += StaticCast<char32_t>(codePoint);
         }
 
-        /**
-         * Decode unicode symbol
-         * @param bytes Unicode symbol bytes
-         * @param encoding Encoding
-         * @return Codepoint
-         */
-        inline static CodePoint Decode(ConstLRef<Vector<Byte>> bytes, ConstLRef<Encoding> encoding) {
-            auto conversionError = ConversionError::NullError;
+        return u32string;
+    }
 
-            auto codePoint = Decode(bytes, encoding, conversionError);
+#if defined(__cpp_lib_char8_t)
 
-            if (conversionError != ConversionError::NullError) {
-                auto errorMessage = U"Decode(ConstLRef<Vector<Byte>>, ConstLRef<Encoding>): Conversion Error! "_us;
+    inline std::u16string UTF8ToUTF16(ConstLRef<std::u8string> string) {
+        std::u16string u16string;
 
-                switch (conversionError) {
-                    case ConversionError::InvalidCodePointError:
-                        errorMessage += U"Invalid Unicode codepoint!";
+        return u16string;
+    }
 
-                        break;
-                    case ConversionError::InvalidBytesError:
-                        errorMessage += U"Invalid Unicode bytes!";
+    inline std::u32string UTF8ToUTF32(ConstLRef<std::u8string> string) {
+        std::u32string u32string;
 
-                        break;
-                }
+        return u32string;
+    }
 
-                throw UException(errorMessage);
-            }
+#endif
 
-            return codePoint;
-        }
+    inline std::string UTF16ToUTF8(ConstLRef<std::u16string> u16string) {
+        std::string string;
 
-        /**
-         * Encode unicode symbol
-         * @param codePoint Codepoint
-         * @param encoding Encoding
-         * @param conversionError Conversion error
-         * @return Unicode symbol bytes
-         */
-        inline static Vector<Byte> Encode(ConstLRef<CodePoint> codePoint, ConstLRef<Encoding> encoding, LRef<ConversionError> conversionError) {
-            auto bytes = InvalidBytes;
+        return string;
+    }
 
-            switch (encoding) {
-                case Encoding::UTF8:
-                    bytes = EncodeUTF8(codePoint, conversionError);
+    inline std::u32string UTF16ToUTF32(ConstLRef<std::u16string> u16string) {
+        std::u32string u32string;
 
-                    break;
-                case Encoding::UTF16:
-                    bytes = EncodeUTF16(codePoint, conversionError);
+        return u32string;
+    }
 
-                    break;
-                case Encoding::UTF32:
-                    bytes = EncodeUTF32(codePoint, conversionError);
+    inline std::string UTF32ToUTF8(ConstLRef<std::u32string> u32string) {
+        std::string string;
 
-                    break;
-            }
+        return string;
+    }
 
-            return bytes;
-        }
+    inline std::u16string UTF32ToUTF16(ConstLRef<std::u32string> u32string) {
+        std::u16string u16string;
 
-        /**
-         * Decode unicode symbol
-         * @param bytes Unicode symbol bytes
-         * @param encoding Encoding
-         * @param conversionError Conversion error
-         * @return Codepoint
-         */
-        inline static CodePoint Decode(ConstLRef<Vector<Byte>> bytes, ConstLRef<Encoding> encoding, LRef<ConversionError> conversionError) {
-            auto codePoint = InvalidCodePoint;
-
-            switch (encoding) {
-                case Encoding::UTF8:
-                    codePoint = DecodeUTF8(bytes, conversionError);
-
-                    break;
-                case Encoding::UTF16:
-                    codePoint = DecodeUTF16(bytes, conversionError);
-
-                    break;
-                case Encoding::UTF32:
-                    codePoint = DecodeUTF32(bytes, conversionError);
-
-                    break;
-            }
-
-            return codePoint;
-        }
-
-        /**
-         * Encoding UTF8 symbol
-         * @param codePoint Codepoint
-         * @param conversionError Conversion error
-         * @return UTF8 symbol bytes
-         */
-        inline static Vector<Byte> EncodeUTF8(ConstLRef<CodePoint> codePoint, LRef<ConversionError> conversionError) {
-            auto bytes = InvalidBytes;
-
-            auto size = SymbolSizeUTF8(codePoint);
-
-            if (!size) {
-                conversionError = ConversionError::InvalidCodePointError;
-
-                return bytes;
-            }
-
-            if (size == 1) {
-                bytes.emplace_back(StaticCast<Byte>(codePoint & 0xFF));
-            } else if (size == 2) {
-                bytes.emplace_back(StaticCast<Byte>(0xC0 | ((codePoint >> 6)  & 0xFF)));
-                bytes.emplace_back(StaticCast<Byte>(0x80 | ((codePoint        & 0x3F))));
-            } else if (size == 3) {
-                bytes.emplace_back(StaticCast<Byte>(0xE0 | ((codePoint >> 12) & 0xFF)));
-                bytes.emplace_back(StaticCast<Byte>(0x80 | ((codePoint >> 6)  & 0x3F)));
-                bytes.emplace_back(StaticCast<Byte>(0x80 | (codePoint         & 0x3F)));
-            } else if (size == 4) {
-                bytes.emplace_back(StaticCast<Byte>(0xF0 | ((codePoint >> 18) & 0xFF)));
-                bytes.emplace_back(StaticCast<Byte>(0x80 | ((codePoint >> 12) & 0x3F)));
-                bytes.emplace_back(StaticCast<Byte>(0x80 | ((codePoint >> 6)  & 0x3F)));
-                bytes.emplace_back(StaticCast<Byte>(0x80 | (codePoint         & 0x3F)));
-            }
-
-            return bytes;
-        }
-
-        /**
-         * Decoding UTF8 symbol
-         * @param bytes UTF8 symbol bytes
-         * @param conversionError Conversion error
-         * @return Codepoint
-         */
-        inline static CodePoint DecodeUTF8(ConstLRef<Vector<Byte>> bytes, LRef<ConversionError> conversionError) {
-            auto codePoint = InvalidCodePoint;
-
-            auto size = SymbolSizeUTF8(bytes[0]);
-
-            if (!size) {
-                conversionError = ConversionError::InvalidBytesError;
-
-                return codePoint;
-            }
-
-            if (size == 1) {
-                codePoint = bytes[0];
-            } else if (size == 2) {
-                codePoint = (StaticCast<CodePoint>((bytes[0] & 0x1f)) << 6)
-                           | StaticCast<CodePoint>((bytes[1] & 0x3f)      );
-            } else if (size == 3) {
-                codePoint = (StaticCast<CodePoint>((bytes[0] & 0x0f) << 12)
-                           | StaticCast<CodePoint>((bytes[1] & 0x3f) << 6 )
-                           | StaticCast<CodePoint>((bytes[2] & 0x3f)      ));
-            } else if (size == 4) {
-                codePoint = (StaticCast<CodePoint>((bytes[0] & 0x07) << 18)
-                           | StaticCast<CodePoint>((bytes[1] & 0x3f) << 12)
-                           | StaticCast<CodePoint>((bytes[2] & 0x3f) << 6 )
-                           | StaticCast<CodePoint>((bytes[3] & 0x3f)      ));
-            }
-
-            return codePoint;
-        }
-
-        /**
-         * Encoding UTF16 symbol
-         * @param codePoint Codepoint
-         * @param conversionError Conversion error
-         * @return UTF16 symbol bytes
-         */
-        inline static Vector<Byte> EncodeUTF16(ConstLRef<CodePoint> codePoint, LRef<ConversionError> conversionError) {
-            // TODO add supporting UTF-16 encoding
-
-            return InvalidBytes;
-        }
-
-        /**
-         * Decoding UTF16 symbol
-         * @param bytes UTF16 symbol bytes
-         * @param conversionError Conversion error
-         * @return Codepoint
-         */
-        inline static CodePoint DecodeUTF16(ConstLRef<Vector<Byte>> bytes, LRef<ConversionError> conversionError) {
-            // TODO add supporting UTF-16 decoding
-
-            return InvalidCodePoint;
-        }
-
-        /**
-         * Encoding UTF32 symbol
-         * @param codePoint Codepoint
-         * @param conversionError Conversion error
-         * @return UTF32 symbol bytes
-         */
-        inline static Vector<Byte> EncodeUTF32(ConstLRef<CodePoint> codePoint, LRef<ConversionError> conversionError) {
-            // TODO add supporting UTF-32 encoding
-
-            return InvalidBytes;
-        }
-
-        /**
-         * Decoding UTF32 symbol
-         * @param bytes UTF32 symbol bytes
-         * @param conversionError Conversion error
-         * @return Codepoint
-         */
-        inline static CodePoint DecodeUTF32(ConstLRef<Vector<Byte>> bytes, LRef<ConversionError> conversionError) {
-            // TODO add supporting UTF-32 decoding
-
-            return InvalidCodePoint;
-        }
-
-        /**
-         * UTF8 symbol size
-         * @param codePoint Codepoint
-         * @return UTF8 symbol size
-         */
-        inline static U8 SymbolSizeUTF8(ConstLRef<CodePoint> codePoint) {
-            auto size = 0;
-
-            if (codePoint <= 0x7F) {
-                size = 1;
-            } else if (codePoint <= 0x7FF) {
-                size = 2;
-            } else if (codePoint <= 0xFFFF) {
-                size = 3;
-            } else if (codePoint <= 0x10FFFF) {
-                size = 4;
-            }
-
-            return size;
-        }
-
-        /**
-         * UTF8 symbol size
-         * @param byte First symbol byte
-         * @return UTF8 symbol size
-         */
-        inline static U8 SymbolSizeUTF8(ConstLRef<Byte> byte) {
-            auto size = 0;
-
-            if (byte <= 0x7F) {
-                size = 1;
-            } else if (byte <= 0xDF) {
-                size = 2;
-            } else if (byte <= 0xEF) {
-                size = 3;
-            } else if (byte <= 0xF4) {
-                size = 4;
-            }
-
-            return size;
-        }
-    };
+        return u16string;
+    }
 
 }
 
