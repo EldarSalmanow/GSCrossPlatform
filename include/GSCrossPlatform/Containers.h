@@ -5,7 +5,7 @@
  * This file include CrossPlatform Containers Module
  */
 
-#include <GSCrossPlatform/Containers/Iterator.h>
+//#include <GSCrossPlatform/Containers/Iterator.h>
 
 #include <GSCrossPlatform/Containers/String.h>
 

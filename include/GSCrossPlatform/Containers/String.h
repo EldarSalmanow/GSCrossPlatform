@@ -107,6 +107,18 @@ namespace CrossPlatform {
 
     public:
 
+        Bool IsAlpha() const;
+
+        Bool IsDigit() const;
+
+        Bool IsWhitespace() const;
+
+        Bool IsIDStart() const;
+
+        Bool IsIDContinue() const;
+
+    public:
+
         Vector<Byte> AsUTF8() const;
 
         Vector<Byte> AsUTF16() const;
@@ -123,12 +135,28 @@ namespace CrossPlatform {
 
         LRef<USymbol> operator=(RRef<USymbol> symbol) noexcept;
 
+        Bool operator==(ConstLRef<USymbol> symbol) const;
+
+        Bool operator!=(ConstLRef<USymbol> symbol) const;
+
+        auto operator<=>(ConstLRef<USymbol> symbol) const;
+
     private:
 
         CodePoint _codePoint;
     };
 
     class UString {
+    public:
+
+        using Iterator = Vector<USymbol>::iterator;
+
+        using ConstIterator = Vector<USymbol>::const_iterator;
+
+        using iterator = Iterator;
+
+        using const_iterator = ConstIterator;
+
     public:
 
         UString();
@@ -171,7 +199,17 @@ namespace CrossPlatform {
 
     public:
 
-        std::string AsUTF8String();
+        U64 Size() const;
+
+        Bool Empty() const;
+
+    public:
+
+        std::string AsUTF8String() const;
+
+        std::u16string AsUTF16String() const;
+
+        std::u32string AsUTF32String() const;
 
     public:
 
@@ -179,13 +217,13 @@ namespace CrossPlatform {
 
     public:
 
-        Vector<USymbol>::iterator begin();
+        Iterator begin();
 
-        Vector<USymbol>::iterator end();
+        Iterator end();
 
-        Vector<USymbol>::const_iterator begin() const;
+        ConstIterator begin() const;
 
-        Vector<USymbol>::const_iterator end() const;
+        ConstIterator end() const;
 
     public:
 
@@ -193,10 +231,48 @@ namespace CrossPlatform {
 
         LRef<UString> operator=(RRef<UString> string) noexcept;
 
+        LRef<UString> operator+=(ConstLRef<USymbol> symbol);
+
+        LRef<UString> operator+=(ConstLRef<UString> string);
+
+        UString operator+(ConstLRef<USymbol> symbol) const;
+
+        UString operator+(ConstLRef<UString> string) const;
+
+        Bool operator==(ConstLRef<UString> string) const;
+
+        Bool operator!=(ConstLRef<UString> string) const;
+
+        auto operator<=>(ConstLRef<UString> string) const;
+
+        LRef<USymbol> operator[](ConstLRef<U64> index);
+
+        ConstLRef<USymbol> operator[](ConstLRef<U64> index) const;
+
     private:
 
         Vector<USymbol> _symbols;
     };
+
+    inline UString operator""_us(ConstPtr<char> text, U64 size) {
+        return UString(text);
+    }
+
+#if defined(__cpp_lib_char8_t)
+
+    inline UString operator""_us(ConstPtr<char8_t> text, U64 size) {
+        return UString(text);
+    }
+
+#endif
+
+    inline UString operator""_us(ConstPtr<char16_t> text, U64 size) {
+        return UString(text);
+    }
+
+    inline UString operator""_us(ConstPtr<char32_t> text, U64 size) {
+        return UString(text);
+    }
 
     LRef<std::istream> operator>>(LRef<std::istream> stream, LRef<UString> string);
 

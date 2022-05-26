@@ -1,6 +1,6 @@
 //#include <GSCrossPlatform/Encoding.h>
 
-#include <GSCrossPlatform/IO/IOStream.h>
+#include <GSCrossPlatform/IO/File.h>
 
 #if defined(GS_OS_WINDOWS)
 

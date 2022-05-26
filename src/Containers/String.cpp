@@ -52,6 +52,26 @@ namespace CrossPlatform {
     USymbol::USymbol(RRef<USymbol> symbol) noexcept
             : _codePoint(symbol._codePoint) {}
 
+    Bool USymbol::IsAlpha() const {
+        return u_isalpha(StaticCast<UChar32>(_codePoint));
+    }
+
+    Bool USymbol::IsDigit() const {
+        return u_isdigit(StaticCast<UChar32>(_codePoint));
+    }
+
+    Bool USymbol::IsWhitespace() const {
+        return u_isspace(StaticCast<UChar32>(_codePoint));
+    }
+
+    Bool USymbol::IsIDStart() const {
+        return u_isIDStart(StaticCast<UChar32>(_codePoint));
+    }
+
+    Bool USymbol::IsIDContinue() const {
+        return u_isIDPart(StaticCast<UChar32>(_codePoint));
+    }
+
     Vector<Byte> USymbol::AsUTF8() const {
         auto bytes = ToUTF8(_codePoint);
 
@@ -92,6 +112,18 @@ namespace CrossPlatform {
         _codePoint = symbol._codePoint;
 
         return *this;
+    }
+
+    Bool USymbol::operator==(ConstLRef<USymbol> symbol) const {
+        return GetCodePoint() == symbol.GetCodePoint();
+    }
+
+    Bool USymbol::operator!=(ConstLRef<USymbol> symbol) const {
+        return !(*this == symbol);
+    }
+
+    auto USymbol::operator<=>(ConstLRef<USymbol> symbol) const {
+        return _codePoint <=> symbol.GetCodePoint();
     }
 
     UString::UString() = default;
@@ -168,10 +200,18 @@ namespace CrossPlatform {
         return *this;
     }
 
-    std::string UString::AsUTF8String() {
+    U64 UString::Size() const {
+        return _symbols.size();
+    }
+
+    Bool UString::Empty() const {
+        return _symbols.empty();
+    }
+
+    std::string UString::AsUTF8String() const {
         std::string string;
 
-        for (auto &symbol : _symbols) {
+        for (auto &symbol : *this) {
             auto codePoint = symbol.GetCodePoint();
 
             for (auto &byte : ToUTF8(codePoint)) {
@@ -182,23 +222,43 @@ namespace CrossPlatform {
         return string;
     }
 
+    std::u16string UString::AsUTF16String() const {
+        std::u16string u16string;
+
+        // ...
+
+        return u16string;
+    }
+
+    std::u32string UString::AsUTF32String() const {
+        std::u32string u32string;
+
+        for (auto &symbol : *this) {
+            auto codePoint = symbol.GetCodePoint();
+
+            u32string += StaticCast<char32_t>(codePoint);
+        }
+
+        return u32string;
+    }
+
     Vector<USymbol> UString::GetSymbols() const {
         return _symbols;
     }
 
-    Vector<USymbol>::iterator UString::begin() {
+    UString::Iterator UString::begin() {
         return _symbols.begin();
     }
 
-    Vector<USymbol>::iterator UString::end() {
+    UString::Iterator UString::end() {
         return _symbols.end();
     }
 
-    Vector<USymbol>::const_iterator UString::begin() const {
+    UString::ConstIterator UString::begin() const {
         return _symbols.begin();
     }
 
-    Vector<USymbol>::const_iterator UString::end() const {
+    UString::ConstIterator UString::end() const {
         return _symbols.end();
     }
 
@@ -220,6 +280,70 @@ namespace CrossPlatform {
         _symbols = std::move(string._symbols);
 
         return *this;
+    }
+
+    LRef<UString> UString::operator+=(ConstLRef<USymbol> symbol) {
+        _symbols.emplace_back(symbol);
+
+        return *this;
+    }
+
+    LRef<UString> UString::operator+=(ConstLRef<UString> string) {
+        for (auto &symbol : string) {
+            _symbols.emplace_back(symbol);
+        }
+
+        return *this;
+    }
+
+    UString UString::operator+(ConstLRef<USymbol> symbol) const {
+        UString outputString;
+
+        outputString += *this;
+
+        outputString += symbol;
+
+        return outputString;
+    }
+
+    UString UString::operator+(ConstLRef<UString> string) const {
+        UString outputString;
+
+        outputString += *this;
+
+        outputString += string;
+
+        return outputString;
+    }
+
+    Bool UString::operator==(ConstLRef<UString> string) const {
+        if (Size() != string.Size()) {
+            return false;
+        }
+
+        for (U64 index = 0; index < Size(); ++index) {
+            if ((*this)[index] != string[index]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    Bool UString::operator!=(ConstLRef<UString> string) const {
+        return !(*this == string);
+    }
+
+    auto UString::operator<=>(ConstLRef<UString> string) const {
+        return Size() <=> string.Size();
+    }
+
+    LRef<USymbol> UString::operator[](ConstLRef<U64> index) {
+        return _symbols[index];
+    }
+
+    ConstLRef<USymbol> UString::operator[](ConstLRef<U64> index) const {
+        return _symbols[index];
     }
 
     LRef<std::istream> operator>>(LRef<std::istream> stream, LRef<UString> string) {
