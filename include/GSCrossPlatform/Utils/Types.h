@@ -128,47 +128,47 @@ using StringIterator = String::iterator;
 /**
  * Stream char type
  */
-//using StreamCharType = CharType;
+using StreamCharType = CharType;
 
 /**
  * Output stream type
  */
-//using OStream = std::basic_ostream<StreamCharType>;
+using OutStream = std::basic_ostream<StreamCharType>;
 
 /**
  * Input stream type
  */
-//using IStream = std::basic_istream<StreamCharType>;
+using InStream = std::basic_istream<StreamCharType>;
 
 /**
  * Output file stream type
  */
-//using OFStream = std::basic_ofstream<StreamCharType>;
+using OutFileStream = std::basic_ofstream<StreamCharType>;
 
 /**
  * Input file stream type
  */
-//using IFStream = std::basic_ifstream<StreamCharType>;
+using InFileStream = std::basic_ifstream<StreamCharType>;
 
 /**
  * Console output stream
  */
-//inline OStream &COut = std::cout;
+inline OutStream &COut = std::cout;
 
 /**
  * Console output error stream
  */
-//inline OStream &CErr = std::cerr;
+inline OutStream &CErr = std::cerr;
 
 /**
  * Console output log stream
  */
-//inline OStream &CLog = std::clog;
+inline OutStream &CLog = std::clog;
 
 /**
  * Console input stream
  */
-//inline IStream &CIn = std::cin;
+inline InStream &CIn = std::cin;
 
 /**
  * Container types
