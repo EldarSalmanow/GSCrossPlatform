@@ -24,23 +24,23 @@ public:
 
 public:
 
-    inline constexpr Bool IsAlpha() const {
+    inline Bool IsAlpha() const {
         return u_isalpha(StaticCast<UChar32>(_codePoint));
     }
 
-    inline constexpr Bool IsDigit() const {
+    inline Bool IsDigit() const {
         return u_isdigit(StaticCast<UChar32>(_codePoint));
     }
 
-    inline constexpr Bool IsWhitespace() const {
+    inline Bool IsWhitespace() const {
         return u_isspace(StaticCast<UChar32>(_codePoint));
     }
 
-    inline constexpr Bool IsIDStart() const {
+    inline Bool IsIDStart() const {
         return u_isIDStart(StaticCast<UChar32>(_codePoint));
     }
 
-    inline constexpr Bool IsIDContinue() const {
+    inline Bool IsIDContinue() const {
         return u_isIDPart(StaticCast<UChar32>(_codePoint));
     }
 

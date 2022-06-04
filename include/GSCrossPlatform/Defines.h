@@ -54,7 +54,7 @@
  */
 #define GS_MAIN int main(int argc, char **argv)
 
-inline constexpr Bool IsOSWindows() {
+inline constexpr bool IsOSWindows() {
 #if defined(GS_OS_WINDOWS)
 
     return true;
@@ -66,7 +66,7 @@ inline constexpr Bool IsOSWindows() {
 #endif
 }
 
-inline constexpr Bool IsCompilerMSVC() {
+inline constexpr bool IsCompilerMSVC() {
 #if defined(GS_COMPILER_MSVC)
 
     return true;
@@ -78,7 +78,7 @@ inline constexpr Bool IsCompilerMSVC() {
 #endif
 }
 
-inline constexpr Bool IsCompilerMinGW() {
+inline constexpr bool IsCompilerMinGW() {
 #if defined(GS_COMPILER_MINGW)
 
     return true;

@@ -1,6 +1,8 @@
 #ifndef GSCROSSPLATFORM_ENCODING_H
 #define GSCROSSPLATFORM_ENCODING_H
 
+#include <string>
+
 #include <GSCrossPlatform/Vector.h>
 
 inline constexpr U32 InvalidCodePoint = 0x10FFFF + 1;

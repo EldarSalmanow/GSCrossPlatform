@@ -1,12 +1,6 @@
 #ifndef GSCROSSPLATFORM_IO_H
 #define GSCROSSPLATFORM_IO_H
 
-#if defined(WIN32)
-
-    #include <Windows.h>
-
-#endif
-
 #include <iostream>
 
 #include <GSCrossPlatform/UString.h>
@@ -51,17 +45,7 @@ inline LRef<std::ostream> operator<<(LRef<std::ostream> stream, ConstLRef<UStrin
     return stream;
 }
 
-inline Bool EnableUnicodeConsole() {
-#if defined(WIN32)
-
-    if (SetConsoleCP(CP_UTF8) == TRUE && SetConsoleOutputCP(CP_UTF8) == TRUE) {
-        return true;
-    }
-
-#endif
-
-    return false;
-}
+inline Bool EnableUnicodeConsole();
 
 static Bool IsEnabledUnicodeConsole = EnableUnicodeConsole();
 

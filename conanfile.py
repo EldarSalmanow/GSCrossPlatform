@@ -14,7 +14,7 @@ class GSCrossPlatformConan(ConanFile):
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {"shared": False, "fPIC": True}
     generators = "cmake_find_package"
-    exports_sources = "CMakeLists.txt", "include/*"
+    exports_sources = "CMakeLists.txt", "include/*", "src/*"
     requires = "icu/70.1"
 
     def config_options(self):
@@ -36,4 +36,7 @@ class GSCrossPlatformConan(ConanFile):
     def package(self):
         cmake = CMake(self)
         cmake.install()
+
+    def package_info(self):
+        self.cpp_info.libs = ["GSCrossPlatformLibrary"]
 
