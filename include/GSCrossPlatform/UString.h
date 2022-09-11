@@ -191,6 +191,10 @@ public:
         return *this;
     }
 
+    inline constexpr Void Clear() {
+        _symbols.Clear();
+    }
+
 public:
 
     inline constexpr U64 Size() const {

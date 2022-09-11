@@ -137,6 +137,16 @@ public:
         return *this;
     }
 
+    constexpr Void Clear() {
+        delete[] _data;
+
+        _data = nullptr;
+
+        _size = 0;
+
+        _allocatedSize = 0;
+    }
+
 public:
 
     inline constexpr Ptr<ValueType> Data() {
