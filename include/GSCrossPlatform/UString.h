@@ -366,4 +366,44 @@ inline constexpr UString operator""_us(ConstPtr<C32> string, U64 size) {
     return UString(string);
 }
 
+class UStringStream {
+public:
+
+    constexpr UStringStream() = default;
+
+    constexpr UStringStream(ConstLRef<UString> string)
+            : _string(string) {}
+
+public:
+
+    inline constexpr UString String() const {
+        return _string;
+    }
+
+public:
+
+    inline constexpr LRef<UStringStream> operator<<(ConstLRef<UString> string) {
+        _string += string;
+
+        return *this;
+    }
+
+    inline constexpr LRef<UStringStream> operator<<(ConstLRef<std::string> string) {
+        *this << UString(string);
+
+        return *this;
+    }
+
+    template<typename T, std::enable_if_t<std::is_integral_v<T>, T> = 0>
+    inline constexpr LRef<UStringStream> operator<<(ConstLRef<T> value) {
+        *this << std::to_string(value);
+
+        return *this;
+    }
+
+private:
+
+    UString _string;
+};
+
 #endif //GSCROSSPLATFORM_USTRING_H
