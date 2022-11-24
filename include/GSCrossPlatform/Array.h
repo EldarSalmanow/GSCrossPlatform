@@ -89,6 +89,14 @@ public:
         return _data + SizeValue;
     }
 
+    inline constexpr ConstIterator cbegin() const {
+        return _data;
+    }
+
+    inline constexpr ConstIterator cend() const {
+        return _data + SizeValue;
+    }
+
 public:
 
     inline constexpr LRef<Array<ValueType, SizeValue>> operator=(ConstLRef<Array<ValueType, SizeValue>> array) {
@@ -186,6 +194,36 @@ namespace std {
     template<typename ValueT, auto SizeV>
     constexpr auto data(LRef<Array<ValueT, SizeV>> array) {
         return array.Data();
+    }
+
+    template<typename ValueT, auto SizeV>
+    constexpr auto begin(LRef<Array<ValueT, SizeV>> array) {
+        return array.begin();
+    }
+
+    template<typename ValueT, auto SizeV>
+    constexpr auto end(LRef<Array<ValueT, SizeV>> array) {
+        return array.end();
+    }
+
+    template<typename ValueT, auto SizeV>
+    constexpr auto begin(ConstLRef<Array<ValueT, SizeV>> array) {
+        return array.begin();
+    }
+
+    template<typename ValueT, auto SizeV>
+    constexpr auto end(ConstLRef<Array<ValueT, SizeV>> array) {
+        return array.end();
+    }
+
+    template<typename ValueT, auto SizeV>
+    constexpr auto cbegin(ConstLRef<Array<ValueT, SizeV>> array) {
+        return array.cbegin();
+    }
+
+    template<typename ValueT, auto SizeV>
+    constexpr auto cend(ConstLRef<Array<ValueT, SizeV>> array) {
+        return array.cend();
     }
 
 }

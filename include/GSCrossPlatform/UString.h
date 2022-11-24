@@ -255,6 +255,14 @@ public:
         return _symbols.end();
     }
 
+    inline constexpr ConstIterator cbegin() const {
+        return _symbols.cbegin();
+    }
+
+    inline constexpr ConstIterator cend() const {
+        return _symbols.cend();
+    }
+
 public:
 
     inline constexpr LRef<UString> operator=(ConstLRef<UString> string) {

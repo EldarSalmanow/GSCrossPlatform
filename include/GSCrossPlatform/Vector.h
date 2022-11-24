@@ -179,6 +179,14 @@ public:
         return _data + _size;
     }
 
+    inline constexpr ConstIterator cbegin() const {
+        return _data;
+    }
+
+    inline constexpr ConstIterator cend() const {
+        return _data + _size;
+    }
+
 public:
 
     inline constexpr LRef<Vector<ValueType>> operator=(ConstLRef<Vector<ValueType>> vector) {
@@ -318,6 +326,36 @@ namespace std {
     template<typename ValueT>
     constexpr auto data(LRef<Vector<ValueT>> vector) {
         return vector.Data();
+    }
+
+    template<typename ValueT>
+    constexpr auto begin(LRef<Vector<ValueT>> vector) {
+        return vector.begin();
+    }
+
+    template<typename ValueT>
+    constexpr auto end(LRef<Vector<ValueT>> vector) {
+        return vector.end();
+    }
+
+    template<typename ValueT>
+    constexpr auto begin(ConstLRef<Vector<ValueT>> vector) {
+        return vector.begin();
+    }
+
+    template<typename ValueT>
+    constexpr auto end(ConstLRef<Vector<ValueT>> vector) {
+        return vector.end();
+    }
+
+    template<typename ValueT>
+    constexpr auto cbegin(ConstLRef<Vector<ValueT>> vector) {
+        return vector.cbegin();
+    }
+
+    template<typename ValueT>
+    constexpr auto cend(ConstLRef<Vector<ValueT>> vector) {
+        return vector.cend();
     }
 
 }

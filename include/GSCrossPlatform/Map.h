@@ -185,6 +185,14 @@ public:
         return _pairs.end();
     }
 
+    inline constexpr ConstIterator cbegin() const {
+        return _pairs.cbegin();
+    }
+
+    inline constexpr ConstIterator cend() const {
+        return _pairs.cend();
+    }
+
 public:
 
     inline constexpr LRef<Map<KeyType, ValueType>> operator=(ConstLRef<Map<KeyType, ValueType>> map) {
@@ -300,6 +308,36 @@ namespace std {
     template<typename KeyT, typename ValueT>
     constexpr auto data(LRef<Map<KeyT, ValueT>> map) {
         return map.Data();
+    }
+
+    template<typename KeyT, typename ValueT>
+    constexpr auto begin(LRef<Map<KeyT, ValueT>> map) {
+        return map.begin();
+    }
+
+    template<typename KeyT, typename ValueT>
+    constexpr auto end(LRef<Map<KeyT, ValueT>> map) {
+        return map.end();
+    }
+
+    template<typename KeyT, typename ValueT>
+    constexpr auto begin(ConstLRef<Map<KeyT, ValueT>> map) {
+        return map.begin();
+    }
+
+    template<typename KeyT, typename ValueT>
+    constexpr auto end(ConstLRef<Map<KeyT, ValueT>> map) {
+        return map.end();
+    }
+
+    template<typename KeyT, typename ValueT>
+    constexpr auto cbegin(ConstLRef<Map<KeyT, ValueT>> map) {
+        return map.cbegin();
+    }
+
+    template<typename KeyT, typename ValueT>
+    constexpr auto cend(ConstLRef<Map<KeyT, ValueT>> map) {
+        return map.cend();
     }
 
 }
