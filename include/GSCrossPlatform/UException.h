@@ -1,12 +1,12 @@
-#ifndef GSCROSSPLATFORM_EXCEPTION_H
-#define GSCROSSPLATFORM_EXCEPTION_H
+#ifndef GSCROSSPLATFORM_UEXCEPTION_H
+#define GSCROSSPLATFORM_UEXCEPTION_H
 
 #include <GSCrossPlatform/UString.h>
 
-class Exception : public std::exception {
+class UException : public std::exception {
 public:
 
-    explicit Exception(UString string)
+    explicit UException(UString string)
             : _string(std::move(string)), _utf8String(_string.AsUTF8()) {}
 
 public:
@@ -28,4 +28,9 @@ private:
     std::string _utf8String;
 };
 
-#endif //GSCROSSPLATFORM_EXCEPTION_H
+enum class Result : I32 {
+    Ok  = 0,
+    Err = 1
+};
+
+#endif //GSCROSSPLATFORM_UEXCEPTION_H
