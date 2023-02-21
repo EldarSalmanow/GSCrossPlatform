@@ -9,7 +9,7 @@
 #include <GSCrossPlatform/UString.h>
 #include <GSCrossPlatform/IO.h>
 #include <GSCrossPlatform/Memory.h>
-#include <GSCrossPlatform/Exception.h>
+#include <GSCrossPlatform/UException.h>
 #include <GSCrossPlatform/Encoding.h>
 
 #endif //GSCROSSPLATFORM_CROSSPLATFORM_H

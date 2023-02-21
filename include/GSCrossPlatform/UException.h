@@ -33,4 +33,8 @@ enum class Result : I32 {
     Err = 1
 };
 
+inline constexpr I32 ToExitCode(Result result) {
+    return StaticCast<I32>(result);
+}
+
 #endif //GSCROSSPLATFORM_UEXCEPTION_H
