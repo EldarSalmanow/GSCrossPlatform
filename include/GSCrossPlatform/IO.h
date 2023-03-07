@@ -65,7 +65,7 @@ inline LRef<std::ostream> operator<<(LRef<std::ostream> stream, ConstLRef<UStrin
     return stream;
 }
 
-inline Bool EnableUnicodeConsole();
+Bool EnableUnicodeConsole();
 
 static Bool IsEnabledUnicodeConsole = EnableUnicodeConsole();
 

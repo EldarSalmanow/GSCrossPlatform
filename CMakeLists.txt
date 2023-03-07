@@ -19,16 +19,15 @@ message(STATUS "    SourceDir:    ${SOURCE_DIR}")
 message(STATUS "    BinaryDir:    ${BINARY_DIR}")
 message(STATUS "    InstallDir:   ${INSTALL_DIR}")
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${BINARY_DIR})
-
 find_package(ICU REQUIRED)
 
-set(PROJECT_INCLUDE_DIRS ${INCLUDE_DIR} ${ICU_INCLUDE_DIRS})
-
 add_library(${LIBRARY_NAME}
+        ${SOURCE_DIR}/UString.cpp
         ${SOURCE_DIR}/IO.cpp)
 
-include_directories(${PROJECT_INCLUDE_DIRS})
+include_directories(${ICU_INCLUDE_DIRS})
+
+include_directories(${INCLUDE_DIR})
 
 install(DIRECTORY "include" DESTINATION ${INSTALL_DIR})
 

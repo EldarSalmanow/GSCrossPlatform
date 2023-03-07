@@ -1,8 +1,6 @@
 #ifndef GSCROSSPLATFORM_USTRING_H
 #define GSCROSSPLATFORM_USTRING_H
 
-#include <unicode/uchar.h>
-
 #include <GSCrossPlatform/Encoding.h>
 
 class USymbol {
@@ -24,25 +22,15 @@ public:
 
 public:
 
-    inline Bool IsAlpha() const {
-        return u_isalpha(StaticCast<UChar32>(_codePoint));
-    }
+    Bool IsAlpha() const;
 
-    inline Bool IsDigit() const {
-        return u_isdigit(StaticCast<UChar32>(_codePoint));
-    }
+    Bool IsDigit() const;
 
-    inline Bool IsWhitespace() const {
-        return u_isspace(StaticCast<UChar32>(_codePoint));
-    }
+    Bool IsWhitespace() const;
 
-    inline Bool IsIDStart() const {
-        return u_isIDStart(StaticCast<UChar32>(_codePoint));
-    }
+    Bool IsIDStart() const;
 
-    inline Bool IsIDContinue() const {
-        return u_isIDPart(StaticCast<UChar32>(_codePoint));
-    }
+    Bool IsIDContinue() const;
 
 public:
 
