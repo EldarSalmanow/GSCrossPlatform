@@ -19,15 +19,25 @@ message(STATUS "    SourceDir:    ${SOURCE_DIR}")
 message(STATUS "    BinaryDir:    ${BINARY_DIR}")
 message(STATUS "    InstallDir:   ${INSTALL_DIR}")
 
+set(EXTERNAL_INCLUDE_DIRS )
+set(EXTERNAL_LIBS         )
+
+# ICU
+
 find_package(ICU REQUIRED)
+
+set(EXTERNAL_INCLUDE_DIRS ${EXTERNAL_INCLUDE_DIRS} ${ICU_INCLUDE_DIRS})
+set(EXTERNAL_LIBS         ${EXTERNAL_LIBS}         ${ICU_LIBRARIES})
 
 add_library(${LIBRARY_NAME}
         ${SOURCE_DIR}/UString.cpp
         ${SOURCE_DIR}/IO.cpp)
 
-include_directories(${ICU_INCLUDE_DIRS})
+target_include_directories(${LIBRARY_NAME} PRIVATE ${EXTERNAL_INCLUDE_DIRS})
 
-include_directories(${INCLUDE_DIR})
+target_include_directories(${LIBRARY_NAME} PRIVATE ${INCLUDE_DIR})
+
+target_link_libraries(${LIBRARY_NAME} PRIVATE ${EXTERNAL_LIBS})
 
 install(DIRECTORY "include" DESTINATION ${INSTALL_DIR})
 
