@@ -50,10 +50,24 @@
 #endif
 
 /**
+ * Attribute macro
+ */
+#define GS_ATTRIBUTE(name) [[name]]
+
+/**
+ * Attribute 'noreturn'
+ */
+#define GS_NORETURN GS_ATTRIBUTE(noreturn)
+
+/**
  * Cross platform entry point function defining
  */
 #define GS_MAIN int main(int argc, char **argv)
 
+/**
+ * Is OS Windows
+ * @return Is OS Windows
+ */
 inline constexpr bool IsOSWindows() {
 #if defined(GS_OS_WINDOWS)
 
@@ -66,6 +80,10 @@ inline constexpr bool IsOSWindows() {
 #endif
 }
 
+/**
+ * Is compiler MSVC
+ * @return Is compiler MSVC
+ */
 inline constexpr bool IsCompilerMSVC() {
 #if defined(GS_COMPILER_MSVC)
 
@@ -78,6 +96,10 @@ inline constexpr bool IsCompilerMSVC() {
 #endif
 }
 
+/**
+ * Is compiler MinGW
+ * @return Is compiler MinGW
+ */
 inline constexpr bool IsCompilerMinGW() {
 #if defined(GS_COMPILER_MINGW)
 
